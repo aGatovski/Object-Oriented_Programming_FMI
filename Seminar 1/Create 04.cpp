@@ -7,7 +7,7 @@ struct Point {
 
 struct Circle {
 
-unsigned radius;
+	unsigned radius;
 };
 
 void initialiseCircle(Circle& c) {
@@ -16,7 +16,7 @@ void initialiseCircle(Circle& c) {
 
 bool pointInCircle(const Circle& c, const Point& p) {
 
-	if ((p.x * p.x) + (p.y * p.y) == (c.radius * c.radius)) {
+	if ((p.x * p.x) + (p.y * p.y) <= (c.radius * c.radius)) {
 		return true;
 	}
 	return false;
@@ -36,7 +36,7 @@ double findDistanceFromZero(const Point& p) {
 
 }
 
-double findDistanceBetweenTwoPoints(const Point& p1, const Point& p2){
+double findDistanceBetweenTwoPoints(const Point& p1, const Point& p2) {
 
 	return sqrt(((p2.x - p1.x) * (p2.x - p1.x)) + (p2.y - p1.y) * (p2.y - p1.y));
 
@@ -72,13 +72,13 @@ int main() {
 	Circle c;
 	initialiseCircle(c);
 
-	Point p1,p2;
+	Point p1, p2;
 	initialisePoint(p1);
-	initialisePoint(p2);
+	//initialisePoint(p2);
 	//printPoint(p);
-	std::cout<<std::endl;
-	std::cout << findDistanceBetweenTwoPoints(p1,p2)<<std::endl;
-	std::cout << findQuadrant(p1);
+	//std::cout << std::endl;
+	//std::cout << findDistanceBetweenTwoPoints(p1, p2) << std::endl;
+	//std::cout << findQuadrant(p1);
 
-	std::cout << pointInCircle(c,p1);
+	std::cout << pointInCircle(c, p1) ;
 }
