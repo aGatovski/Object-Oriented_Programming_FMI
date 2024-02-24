@@ -20,6 +20,65 @@ struct Class {
 	double classAvrGrade;
 };
 
+void swapGrade(double* xp, double* yp){
+	int temp = *xp;
+	*xp = *yp;
+	*yp = temp;
+}
+
+void swapChar(char& ch1, char& ch2) {
+
+	char temp = ch1;
+	ch1 = ch2;
+	ch2 = temp;
+}
+
+size_t getStrLength(const char* text) {
+	if (!text) {
+		return 0;
+	}
+
+	size_t length = 0;
+
+	while (text[length]) {
+		length++;
+	}
+
+	return length;
+}
+
+void swapTextArr(char* s1, char* s2) {
+	
+	for (size_t i = 0; i < fnConstant; i++){
+		swapChar(s1[i], s2[i]);
+	}
+
+
+}
+
+void classSortByGrade(Class& group, size_t numberOfStudents) {
+
+	for (size_t i = 0; i < numberOfStudents-1; i++)
+	{
+		size_t minIdx = i;
+
+		for (size_t j= i+1; j < numberOfStudents; j++)
+		{
+			if (group.classArr[j].grade <= group.classArr[minIdx].grade) {
+				minIdx = j;
+
+				swapGrade(&group.classArr[minIdx].grade, &group.classArr[i].grade);
+
+				swapTextArr(group.classArr[minIdx].fn, group.classArr[i].fn);
+				
+				swapTextArr(group.classArr[minIdx].name, group.classArr[i].name);
+			}
+
+		}
+	}
+
+}
+
 void initializeStudent(Student& s) {
 	std::cin >> s.name >> s.fn >> s.grade;
 }
@@ -55,12 +114,49 @@ size_t numberOfScholarships(const Class& group,const size_t& numberOfStudents,co
 
 	for (size_t i = 0; i < numberOfStudents; i++){
 
-		if (abs(group.classArr[i].grade - minimalGradeForScholarship) < epsilon){
+		if (group.classArr[i].grade >= minimalGradeForScholarship){
 			numberOfScholars++;
 		}
 	}
 
 	return numberOfScholars;
+}
+
+void printScholars(Class& group, const double& minimalGradeForScholarship, const size_t& numberOfStudents) {
+
+	classSortByGrade(group, numberOfStudents);
+	printClass(group, numberOfStudents);
+
+	for (size_t i = 0; i < numberOfStudents; i++){
+		if (group.classArr[i].grade >= minimalGradeForScholarship) {
+			std::cout << "Name: " << group.classArr[i].name << " with a grade: " << group.classArr[i].grade << " get's a scholarship" << std::endl;
+		}
+	}
+}
+
+bool isSameString(const char* str1, const char* str2) {
+
+	size_t length = getStrLength(str1);
+
+	for (size_t i = 0; i < length; i++)
+	{
+		if (str1[i] != str2[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isStudentInGroup(const Class& group, const size_t& numberOfStudents, const char* FN) {
+
+	for (size_t i = 0; i < numberOfStudents; i++)
+	{
+		if (isSameString(group.classArr[i].fn, FN)) {
+			return true;
+		}
+		
+	}
+	return false;
 }
 
 int main() {
@@ -72,10 +168,22 @@ int main() {
 	Class group;
 	initializeClass(group,numberOfStudents);
 	printClass(group, numberOfStudents);
+
+	//Minimal grade for scholarship;
 	std::cout <<"Min Grade is: "  << std::endl;
 	double minGrade;
 	std::cin >> minGrade;
 
-	std::cout << "Number of students with scholarships: " <<  numberOfScholarships(group, numberOfStudents, minGrade);
+	std::cout << "Number of students with scholarships: " <<  numberOfScholarships(group, numberOfStudents, minGrade)<<std::endl;
+
+	printScholars(group, minGrade, numberOfStudents);
+
+
+	//Check student in group
+	Student check;
+
+	initializeStudent(check);
+
+	std::cout << isStudentInGroup(group,numberOfStudents, check.fn);
 
 }
