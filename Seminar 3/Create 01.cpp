@@ -3,12 +3,18 @@
 #include <sstream>
 
 namespace GLOBAL_CONSTANTS {
-
+	constexpr char firstFileName[] = "1.txt";
+	constexpr char secondFileName[] = "2.txt";
+	constexpr char outputFileName[] = "output.txt";
 	constexpr char ROW_SEPARATOR = '|';
 	constexpr char COL_SEPARATOR = ',';
-	constexpr size_t ROW_SIZE = 100;
+	constexpr size_t INPUT_TEXT_SIZE = 100;
 }
 
+enum class ErrorCodes {
+	clearConversion = 1,
+	incorrectinput = -1
+};
 
 size_t getRowCount(std::ifstream& in) {
 	size_t rowsCount = 0;
@@ -42,37 +48,67 @@ size_t getColCount(std::ifstream& in) {
 	return colsCount;
 }
 
-
 size_t convertCharToDigit(char ch) {
 	return ch - '0';
 }
 
 int getIntFromChar(const char* str) {
 
+	if (!str) {
+		return 0;
+	}
+
 	int number = 0;
 
-	while (*str)
-	{
-		number = number * 10 + convertCharToDigit(*str);
+	if (*str == '-') {
 		str++;
+		while (*str) {
+			number = number * 10 + convertCharToDigit(*str);
+			str++;
+		}
+
+		return -number;
 	}
-	return number;
+
+	else {
+		while (*str) {
+			number = number * 10 + convertCharToDigit(*str);
+			str++;
+		}
+
+		return number;
+	}
 }
 
-void getArrayCol(std::stringstream& str , char* row, int** matrix, int indexRow , char sep) {
+int** initialiseMatrix(std::ifstream& in, int** matrix, const char& sep) {
 
-	int currColIndex = 0;
+	size_t currRow = 0;
 
-	while (!str.eof()){
+	while (!in.eof()) {
+		//Initialise the current row array;
+		matrix[currRow] = new int[GLOBAL_CONSTANTS::INPUT_TEXT_SIZE];
 
-		str.getline((char*)matrix[indexRow][currColIndex++], 1024,',');
-		std::cout << matrix[indexRow][currColIndex++];
+		//Get the current column content
+		char* columnBuff = new char[GLOBAL_CONSTANTS::INPUT_TEXT_SIZE];
+		in.getline(columnBuff, GLOBAL_CONSTANTS::INPUT_TEXT_SIZE, sep);
 
+		//StringStream the column to be able to easily split it;
+		std::stringstream str(columnBuff); //3,3,1
+
+		size_t currColIDx = 0;
+
+		while (!str.eof())
+		{
+			char rowBuff[GLOBAL_CONSTANTS::INPUT_TEXT_SIZE];
+			str.getline(rowBuff, GLOBAL_CONSTANTS::INPUT_TEXT_SIZE, ',');
+			matrix[currRow][currColIDx++] = getIntFromChar(rowBuff);
+			
+		}
+		
+		currRow++;
 	}
 
-
-	matrix[indexRow] = new int[3];
-	
+	return matrix;
 }
 
 void printMatrix(int** const matrix, const size_t rows, const size_t cols) {
@@ -81,62 +117,93 @@ void printMatrix(int** const matrix, const size_t rows, const size_t cols) {
 	{
 		for (size_t j = 0; j < cols; j++)
 		{
-			std::cout << matrix[rows][cols] << " ";
+			std::cout << matrix[i][j] << " ";
 		}
 
 		std::cout << std::endl;
 	}
 }
 
+int** matrixMultiplication(int** const matrixOne, const size_t& rows1, const size_t& cols1, int** const matrixTwo, const size_t& rows2, const size_t& cols2, size_t& rowsResult , size_t& colsResult) {
+	
 
+	if (cols1 == rows2) {
+		rowsResult = rows1;
+		colsResult = cols2;
 
-int** initialiseMatrix(std::ifstream& in, int** matrix, const char& sep) {
+		int** matrixResult = new int* [rows1];
 
-	size_t currRow = 0;
+		for (size_t i = 0; i < rows1; i++) {
+			matrixResult[i] = new int[cols2];
 
-	while (!in.eof()) {
+			for (size_t j = 0; j < cols2; j++) {
+				matrixResult[i][j] = 0;
 
-		matrix[currRow] = new int[100];
-
-		char* col = new char[40];
-
-		in.getline(col, 40, sep);
-
-
-		std::stringstream str(col); //3,3,1
-
-		size_t currColIDx = 0;
-
-		while (!str.eof())
-		{
-
-			char row[100];
-			str.getline(row, 1024, ',');
-			matrix[currRow][currColIDx++] = getIntFromChar(row);
-			//std::cout << matrix[currRow][(--currColIDx)];
-
+				for (size_t k = 0; k < cols1; k++) {
+					matrixResult[i][j] += matrixOne[i][k] * matrixTwo[k][j];
+				}
+			}
 		}
 
-		currRow++;
-		str.clear();
+		printMatrix(matrixResult, rows1, cols2);
 
+		return matrixResult;
 	}
 
-	printMatrix(matrix,2,2);
+	else if (cols2 == rows1) {
+		rowsResult = rows2;
+		colsResult = cols1;
 
-	return matrix;
+		int** matrixResult = new int* [rows2];
+
+		for (size_t i = 0; i < rows2; i++) {
+			matrixResult[i] = new int[cols1];
+
+			for (size_t j = 0; j < cols1; j++) {
+				matrixResult[i][j] = 0;
+
+				for (size_t k = 0; k < cols2; k++) {
+					matrixResult[i][j] += matrixOne[i][k] * matrixTwo[k][j];
+				}
+			}
+		}
+	}
+
+	else {
+		rowsResult = 0;
+		colsResult = 0;
+
+		int** matrixResult = new int* [rows1];
+		return matrixResult;
+	}
+	 
 }
 
+void printContentsInFile(std::ofstream& output, int** const matrix , const size_t rows, const size_t cols) {
+
+	for (size_t i = 0; i < rows; i++) {
+		for (size_t j = 0; j < cols; j++) {
+
+			if (j == cols - 1) {
+				output << matrix[i][j] << GLOBAL_CONSTANTS::ROW_SEPARATOR;
+			}
+			else {
+				output << matrix[i][j] << GLOBAL_CONSTANTS::COL_SEPARATOR;
+			}
+		}
+	}
+}
 
 int main() {
 
-	std::ifstream in1("1.txt", std::ios::in);
+	//Check if both files are correctly open
+	std::ifstream in1(GLOBAL_CONSTANTS::firstFileName, std::ios::in);
 	if (!in1.is_open())
 	{
 		return 0;
 	}
 
-	std::ifstream in2("2.txt", std::ios::in);
+	std::ifstream in2(GLOBAL_CONSTANTS::secondFileName, std::ios::in);
 	if (!in2.is_open())
 	{
 		in2.close();
@@ -151,8 +218,8 @@ int main() {
 	in2.seekg(0, std::ios::beg);
 
 	//get number of cols
-	const size_t colsCount1 = getColCount(in1);
-	const size_t colssCount2 = getColCount(in2);
+	const size_t colsCount1 = (getColCount(in1) / rowsCount1) + 1; 
+	const size_t colssCount2 = (getColCount(in2) / rowsCount2) + 1;
 
 	in1.clear();
 	in2.clear();
@@ -160,28 +227,47 @@ int main() {
 	in1.seekg(0, std::ios::beg);
 	in2.seekg(0, std::ios::beg);
 
-
+	//Initialise matrixes
 	int** matrix1 = new int*[rowsCount1];
 	int** matrix2 = new int* [rowsCount2];
 
-	matrix1[0] = new int[40];
-
-
 	matrix1 = initialiseMatrix(in1, matrix1, GLOBAL_CONSTANTS::ROW_SEPARATOR);
-
-	//printMatrix(matrix1, 3, 3);
-
-
-	// Free allocated memory
-	for (size_t i = 0; i < 40; i++) {
-		delete[] matrix1[i];
-		delete[] matrix2[i];
-	}
-	delete[] matrix1;
-	delete[] matrix2;
-
+	matrix2 = initialiseMatrix(in2, matrix2, GLOBAL_CONSTANTS::ROW_SEPARATOR);
+	
+	//Close the inputFiles
 	in1.close();
 	in2.close();
+
+	std::ofstream output(GLOBAL_CONSTANTS::outputFileName,std::ios::out | std::ios::trunc);
+	
+	if (!output.is_open()){
+		return -1;
+	}
+
+	int** matrixResult;
+	size_t rowsResult = 0;
+	size_t colsResult = 0;
+
+	matrixResult = matrixMultiplication(matrix1, rowsCount1, colsCount1, matrix2, rowsCount2, colssCount2, rowsResult,colsResult);
+
+	printContentsInFile(output, matrixResult, rowsResult, colsResult);
+
+
+
+	output.close();
+
+	// Free allocated memory
+	for (size_t i = 0; i < rowsCount1; i++) {
+		delete[] matrix1[i];
+	}
+
+	for (size_t i = 0; i < rowsCount2; i++) {
+		delete[] matrix2[i];
+	}
+
+
+	delete[] matrix1;
+	delete[] matrix2;
 
 	return 0;
 }
