@@ -22,7 +22,7 @@ struct Student {
 };
 
 struct Class {
-    Student studentsArr[GLOBAL_CONSTANTS::CLASS_SIZE];
+    Student* studentsArr = new Student[GLOBAL_CONSTANTS::CLASS_SIZE];
 };
 
 Student readStudentFromRow(const char* row) {
@@ -69,7 +69,7 @@ Class parseFromFile(const char* fileName,size_t& classSize) {
         Class studentsArr;
         return studentsArr;
     }
-
+    
     return parseFromFile(in, classSize);
 }
 
@@ -89,19 +89,37 @@ void printClass(Class& studentsArr,size_t classSize) {
     }
 }
 
-int main(){
+void printToCSVFile(const char* fileName,const Class& studentsArr,size_t& classSize) {
+    std::ofstream out(fileName,std::ios::trunc | std::ios::out);
 
+    if (!out.is_open()){
+        std::cout << "Could not open file to read" << std::endl;
+        return;
+    }
+
+    for (size_t i = 0; i < classSize; i++){
+        out << studentsArr.studentsArr[i].firstName;
+
+        out.put(GLOBAL_CONSTANTS::ROW_SEPARATOR);
+
+        out << studentsArr.studentsArr[i].lastName;
+        out.put(GLOBAL_CONSTANTS::ROW_SEPARATOR);
+        out << studentsArr.studentsArr[i].facultyNumber;
+        out.put(GLOBAL_CONSTANTS::ROW_SEPARATOR);
+        out << studentsArr.studentsArr[i].averageGrade;
+        out.put(GLOBAL_CONSTANTS::ROW_SEPARATOR);
+        out << studentsArr.studentsArr[i].hairColour;
+        out << std::endl;
+    }
+}
+
+int main(){
     size_t classSize = 0;
 
     Class studentsArr = parseFromFile("table.csv", classSize);
+
+    printToCSVFile("newTable.csv", studentsArr, classSize);
+
     printClass(studentsArr, classSize);
 
-
-
-   /* std::ifstream in(GLOBAL_CONSTANTS::FILENAME);
-
-    if (!in.is_open()){
-        std::cout << "Could not open file to read" << std::endl;
-        return -1;
-    }*/
 }
