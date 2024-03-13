@@ -152,13 +152,8 @@ int** matrixMultiplication(int** const matrixOne, const size_t& rows1, const siz
 	}
 
 	else {
-		rowsResult = 0;
-		colsResult = 0;
-
-		std::cout << "Impossible to multiply the matrixes";
-
-		int** matrixResult = new int* [rows1];
-		return matrixResult;
+	std::cout << "Impossible to multiply the matrixes";
+	return nullptr;
 	}
 
 }
