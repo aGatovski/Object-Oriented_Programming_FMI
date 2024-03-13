@@ -13,45 +13,25 @@ namespace GLOBAL_CONSTANTS {
 	constexpr size_t INPUT_TEXT_SIZE = 100;
 }
 
-enum class ErrorCodes {
-	clearConversion = 1,
-	incorrectinput = -1
-};
-
-size_t getRowCount(std::ifstream& in) {
-	size_t rowsCount = 0;
+void getMatrixDimensions(std::ifstream& in, size_t& rows, size_t& cols) {
 	char input;
 
-	while (!in.eof()) {
+	while (!in.eof())
+	{
 		in.get(input);
-
 		if (input == GLOBAL_CONSTANTS::ROW_SEPARATOR) {
-			rowsCount++;
+			rows++;
+		}
+		if (input == GLOBAL_CONSTANTS::COL_SEPARATOR) {
+			cols++;
 		}
 	}
+
+	cols = cols / rows;
+	rows++;
 
 	in.clear();
-	return rowsCount + 1;
-}
-
-size_t getColCount(std::ifstream& in) {
-	size_t colsCount = 0;
-	char input;
-
-	while (!in.eof()) {
-		in.get(input);
-
-		if (input == GLOBAL_CONSTANTS::COL_SEPARATOR) {
-			colsCount++;
-		}
-
-		if (input == GLOBAL_CONSTANTS::ROW_SEPARATOR) {
-			break;
-		}
-	}
-
-
-	return colsCount;
+	in.seekg(0, std::ios::beg);
 }
 
 size_t convertCharToDigit(char ch) {
@@ -101,7 +81,6 @@ void initialiseMatrix(std::ifstream& in, int** matrix, const char& sep) {
 		std::stringstream str(columnBuff); //3,3,1
 
 		size_t currColIDx = 0;
-
 		while (!str.eof())
 		{
 			char rowBuff[GLOBAL_CONSTANTS::INPUT_TEXT_SIZE];
@@ -129,7 +108,6 @@ void printMatrix(int** const matrix, const size_t rows, const size_t cols) {
 
 int** matrixMultiplication(int** const matrixOne, const size_t& rows1, const size_t& cols1, int** const matrixTwo, const size_t& rows2, const size_t& cols2, size_t& rowsResult, size_t& colsResult) {
 
-
 	if (cols1 == rows2) {
 		rowsResult = rows1;
 		colsResult = cols2;
@@ -152,7 +130,7 @@ int** matrixMultiplication(int** const matrixOne, const size_t& rows1, const siz
 
 		return matrixResult;
 	}
-
+	
 	else if (cols2 == rows1) {
 		rowsResult = rows2;
 		colsResult = cols1;
@@ -170,11 +148,14 @@ int** matrixMultiplication(int** const matrixOne, const size_t& rows1, const siz
 				}
 			}
 		}
+		return matrixResult;
 	}
 
 	else {
 		rowsResult = 0;
 		colsResult = 0;
+
+		std::cout << "Impossible to multiply the matrixes";
 
 		int** matrixResult = new int* [rows1];
 		return matrixResult;
@@ -213,22 +194,9 @@ int main() {
 		return 0;
 	}
 
-	//get number of rows
-	const size_t rowsCount1 = getRowCount(in1);
-	const size_t rowsCount2 = getRowCount(in2);
-
-	in1.seekg(0, std::ios::beg);
-	in2.seekg(0, std::ios::beg);
-
-	//get number of cols
-	const size_t colsCount1 = (getColCount(in1) / rowsCount1) + 1;
-	const size_t colssCount2 = (getColCount(in2) / rowsCount2) + 1;
-
-	in1.clear();
-	in2.clear();
-
-	in1.seekg(0, std::ios::beg);
-	in2.seekg(0, std::ios::beg);
+	size_t rowsCount1 = 0, rowsCount2 = 0, colsCount1 = 0, colsCount2 = 0;
+	getMatrixDimensions(in1, rowsCount1, colsCount1);
+	getMatrixDimensions(in2, rowsCount2, colsCount2);
 
 	//Initialise matrixes
 	int** matrix1 = new int* [rowsCount1];
@@ -251,7 +219,7 @@ int main() {
 	size_t rowsResult = 0;
 	size_t colsResult = 0;
 
-	matrixResult = matrixMultiplication(matrix1, rowsCount1, colsCount1, matrix2, rowsCount2, colssCount2, rowsResult, colsResult);
+	matrixResult = matrixMultiplication(matrix1, rowsCount1, colsCount1, matrix2, rowsCount2, colsCount2, rowsResult, colsResult);
 
 	printContentsInFile(output, matrixResult, rowsResult, colsResult);
 
