@@ -43,10 +43,8 @@ struct HTMLTABLE
 	size_t rowsCount = 0;
 	size_t colsCount = 0;
 };
-bool isDigit(char ch) {
-	return ch >= '0' && ch <= '9';
-}
 
+//Make same functions
 bool containsTH(const char* str) {
 	while (*str != '\0') {
 		if (*str == 't' || *str == 'T') {
@@ -132,9 +130,12 @@ bool containsSlashTR(const char* str) {
 }
 
 
-
 //opravi gi
 //ASCI > 255 RETURN -1 FOR ERROR HANDLING
+bool isDigit(char ch) {
+	return ch >= '0' && ch <= '9';
+}
+
 int extractAsciiNumber(const char* str, size_t& startIdx) {
 	unsigned asciiNumber = 0;
 	for (size_t i = startIdx; i < startIdx+1; i++) {
@@ -191,7 +192,7 @@ void containsValueToBeConverted(char* str) {
 	}
 }
 
-
+//Make it look better
 void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 
 	std::stringstream rowStream(rowStr);
@@ -285,6 +286,8 @@ void parseFromFile(const char* fileName, HTMLTABLE& table)
 	//return table = parseFromFile(ifs);
 }
 
+
+//Works look at it on Sunday
 void calculateMaxWidthCells(const HTMLTABLE& table,size_t* maxWidths) {
 	
 
@@ -338,16 +341,67 @@ void printTable(const HTMLTABLE& table) {
 	}
 }
 
+void edit(HTMLTABLE& table, size_t rowNumber, size_t colNumber,char* newValue) {
+	containsValueToBeConverted(newValue);
+	strcpy(table.rows[rowNumber - 1].cells->cell, newValue);
+}
+
+void remove(HTMLTABLE& table, size_t rowNumber) {
+	
+	for (size_t i = rowNumber-1; i < table.rowsCount; i++){
+		for (size_t j= 0; j< table.colsCount; j++)
+		{
+			strcpy(table.rows[i].cells[j].cell, table.rows[i + 1].cells[j].cell);
+		}
+		
+	}
+
+	table.rowsCount--;
+}
+
+void add(HTMLTABLE& table, size_t rowNumber, const char* arrayValues) {
+	table.rowsCount++;
+	rowNumber--;
+
+	for (size_t i = table.rowsCount-1; i >= rowNumber; i--) {
+		for (size_t j = 0; j < table.colsCount; j++)
+		{
+			strcpy(table.rows[i].cells[j].cell, table.rows[i - 1].cells[j].cell);
+		}
+
+	}
+
+	std::stringstream valueStream(arrayValues);
+	for (size_t j = 0; j < table.colsCount && !valueStream.eof(); j++) {
+		valueStream.getline(table.rows[rowNumber].cells[j].cell, GlobalConstants::FIELD_MAX_SIZE, ',');
+	}
+	
+}
 
 
 int main() {
-	//?? ????????? ?? ????????? ??? ??? ??????? ???? ? ??? ?? ???????       HTMLCODE.txt
+	//HTMLCODE.txt
 	char fileName[GlobalConstants::MAX_FILENAME_SIZE];
 	std::cin >> fileName;
 	HTMLTABLE table;
 	parseFromFile(fileName, table);
 
+	std::cin.ignore();
+	char buff[GlobalConstants::BUFFER_SIZE];
+	do
+	{
+		std::cin.getline(buff, GlobalConstants::BUFFER_SIZE,';');
+		std::stringstream manipulations(buff);
+
+		char manimupalationToBeMAde = manipulations.get();
+
+		//if(manimupalationToBeMAde=='')
+
+
+	} while (true);
+
+	//while(std::getline(buffComands,50))
+
 	printTable(table);
 
-	//containsValueToBeConverted((char*)"&#97");
 }
