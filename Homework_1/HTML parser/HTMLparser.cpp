@@ -43,9 +43,9 @@ struct HTMLTABLE
 	size_t rowsCount = 0;
 	size_t colsCount = 0;
 };
-
-
-
+bool isDigit(char ch) {
+	return ch >= '0' && ch <= '9';
+}
 
 bool containsTH(const char* str) {
 	while (*str != '\0') {
@@ -100,6 +100,7 @@ bool containsSlashTH(const char* str) {
 
 	return false;
 }
+
 bool containsSlashTD(const char* str) {
 	while (*str != '\0') {
 		if (*str == '/') {
@@ -114,6 +115,7 @@ bool containsSlashTD(const char* str) {
 
 	return false;
 }
+
 bool containsSlashTR(const char* str) {
 	while (*str != '\0') {
 		if (*str == '/') {
@@ -128,8 +130,66 @@ bool containsSlashTR(const char* str) {
 
 	return false;
 }
-//opravi gi
 
+
+
+//opravi gi
+//ASCI > 255 RETURN -1 FOR ERROR HANDLING
+int extractAsciiNumber(const char* str, size_t& startIdx) {
+	unsigned asciiNumber = 0;
+	for (size_t i = startIdx; i < startIdx+1; i++) {
+		if (isdigit(str[i]) && asciiNumber < 256) {
+			asciiNumber = asciiNumber * 10 + (str[i] - '0');
+			startIdx++;
+		}
+		else {
+			//Invalid ASCII code => the text reamins &#256 e.x
+			if (asciiNumber > 255) {
+				return -1;
+			}
+			//The char is not a digit => we have the ASCII number
+			break;
+		}
+	}
+	return asciiNumber;
+}
+
+char convertIntToChar(unsigned asciiNumber) {
+	return char(asciiNumber);
+}
+
+void replaceSubstring(char* str, size_t startIdx,size_t endIdx, unsigned asciiNumber) {
+	char ch = convertIntToChar(asciiNumber);
+	size_t length = strlen(str);
+
+	str[startIdx++] = ch;
+	for (; endIdx < length; startIdx++){
+		str[startIdx] = str[endIdx++];
+	}
+
+	str[startIdx] = '\0';
+}
+
+void containsValueToBeConverted(char* str) {
+	unsigned strLen = strlen(str);
+
+	for (size_t i = 0; i < strLen; i++) {
+		if (str[i] == '&') {
+			if (str[i + 1] == '#') {
+				size_t currIndex = i + 2;
+				int asciiNumber = extractAsciiNumber(str,currIndex);
+
+
+				if (asciiNumber < 0) {
+					continue;
+				}
+				else {
+					replaceSubstring(str, i,currIndex, asciiNumber);
+				}
+			}
+		}
+	}
+}
 
 
 void parseFromRow(const char* rowStr, HTMLTABLE& table) {
@@ -137,17 +197,13 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 	std::stringstream rowStream(rowStr);
 	char buff[GlobalConstants::BUFFER_SIZE];
 
-	bool flagIsTR = false;
-	
-
-
-
 	while (!rowStream.eof() && table.colsCount < GlobalConstants::MAX_COLUMN_COUNT) {
 
 		if (flagIsInText) {
 			rowStream.getline(buff, GlobalConstants::BUFFER_SIZE, '<');
 			if (containsSlashTH(buff) || containsSlashTD(buff)) {
 				flagIsInText = false;
+				containsValueToBeConverted(table.rows[table.rowsCount].cells[table.colsCount].cell);
 				table.colsCount++;
 			}
 			else {
@@ -166,6 +222,8 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 
 		//defence to always get the right colls count and cell idx
 		if(containsSlashTH(buff) || containsSlashTD(buff)) {
+			///work it later
+			containsValueToBeConverted(table.rows[table.rowsCount].cells[table.colsCount].cell);
 			flagIsInText = false;
 			table.colsCount++;
 			continue;
@@ -201,7 +259,6 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 	}
 
 }
-
 
 void parseFromFile(std::istream& ifs, HTMLTABLE& result) {
 	//HTMLTABLE result;
@@ -291,4 +348,6 @@ int main() {
 	parseFromFile(fileName, table);
 
 	printTable(table);
+
+	//containsValueToBeConverted((char*)"&#97");
 }
