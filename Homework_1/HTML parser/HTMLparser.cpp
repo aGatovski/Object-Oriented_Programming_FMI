@@ -44,122 +44,94 @@ struct HTMLTABLE
 	size_t colsCount = 0;
 };
 
-//Make same functions
-bool containsTH(const char* str) {
+bool containsTag(const char* str, const char* tag) {
 	while (*str != '\0') {
-		if (*str == 't' || *str == 'T') {
-			if (*(str + 1) == 'h' || *(str + 1) == 'H') {
-					return true;
+		if (*str == tag[0]) {
+			const char* tagPtr = tag + 1;
+			const char* strPtr = str + 1;
+
+			while (*tagPtr != '\0' && *strPtr != '\0') {
+				if (*strPtr != *tagPtr) {
+					break;
+				}
+				strPtr++;
+				tagPtr++;
+			}
+
+			if (*tagPtr == '\0') {
+				return true;
 			}
 		}
-		++str;
+		str++;
 	}
-
 	return false;
+}
+
+bool containsTH(const char* str) {
+	return containsTag(str, "th");
 }
 
 bool containsTR(const char* str) {
-	while (*str != '\0') {
-		if (*str == 't' || *str == 'T') {
-			if (*(str + 1) == 'r' || *(str + 1) == 'R') {
-				return true;
-			}
-		}
-		++str;
-	}
-
-	return false;
+	return containsTag(str, "tr");
 }
 
 bool containsTD(const char* str) {
-	while (*str != '\0') {
-		if (*str == 't' || *str == 'T') {
-			if (*(str + 1) == 'd' || *(str + 1) == 'D') {
-				return true;
-			}
-		}
-		++str;
-	}
-
-	return false;
+	return containsTag(str, "td");
 }
 
 bool containsSlashTH(const char* str) {
-	while (*str != '\0') {
-		if (*str == '/') {
-			if(*(str + 1) == 't' || *(str + 1) == 'T') {
-				if (*(str + 2) == 'h' || *(str + 2) == 'H') {
-					return true;
-				}
-			}
-		}
-		++str;
-	}
-
-	return false;
+	return containsTag(str, "/th");
 }
 
 bool containsSlashTD(const char* str) {
-	while (*str != '\0') {
-		if (*str == '/') {
-			if (*(str + 1) == 't' || *(str + 1) == 'T') {
-				if (*(str + 2) == 'd' || *(str + 2) == 'D') {
-					return true;
-				}
-			}
-		}
-		++str;
-	}
-
-	return false;
+	return containsTag(str, "/td");
 }
 
 bool containsSlashTR(const char* str) {
-	while (*str != '\0') {
-		if (*str == '/') {
-			if (*(str + 1) == 't' || *(str + 1) == 'T') {
-				if (*(str + 2) == 'r' || *(str + 2) == 'R') {
-					return true;
-				}
-			}
-		}
-		++str;
-	}
-
-	return false;
+	return containsTag(str, "/tr");
 }
 
+bool containsRemove(const char* str) {
+	return containsTag(str, "remove") || containsTag(str,"Remove");
+}
 
-//opravi gi
-//ASCI > 255 RETURN -1 FOR ERROR HANDLING
+bool containsEdit(const char* str) {
+	return containsTag(str, "edit") || containsTag(str, "Edit");
+}
+
+bool containsAdd(const char* str) {
+	return containsTag(str, "add") || containsTag(str, "Add");
+}
+
+bool containsPrint(const char* str) {
+	return containsTag(str, "print") || containsTag(str, "Print");
+}
+
 bool isDigit(char ch) {
 	return ch >= '0' && ch <= '9';
 }
 
 int extractAsciiNumber(const char* str, size_t& startIdx) {
 	unsigned asciiNumber = 0;
+
 	for (size_t i = startIdx; i < startIdx+1; i++) {
-		if (isdigit(str[i]) && asciiNumber < 256) {
+		if (isDigit(str[i]) && asciiNumber < 256) {
 			asciiNumber = asciiNumber * 10 + (str[i] - '0');
 			startIdx++;
 		}
 		else {
-			//Invalid ASCII code => the text reamins &#256 e.x
-			if (asciiNumber > 255) {
-				return -1;
-			}
-			//The char is not a digit => we have the ASCII number
-			break;
+			return asciiNumber;
 		}
 	}
+
 	return asciiNumber;
 }
 
-char convertIntToChar(unsigned asciiNumber) {
+char convertIntToChar(const unsigned asciiNumber) {
 	return char(asciiNumber);
 }
 
-void replaceSubstring(char* str, size_t startIdx,size_t endIdx, unsigned asciiNumber) {
+void replaceSubstring(char* str,size_t startIdx, size_t endIdx,const unsigned asciiNumber) {
 	char ch = convertIntToChar(asciiNumber);
 	size_t length = strlen(str);
 
@@ -180,19 +152,14 @@ void containsValueToBeConverted(char* str) {
 				size_t currIndex = i + 2;
 				int asciiNumber = extractAsciiNumber(str,currIndex);
 
-
-				if (asciiNumber < 0) {
-					continue;
-				}
-				else {
-					replaceSubstring(str, i,currIndex, asciiNumber);
+				if (asciiNumber >= 0 && asciiNumber<256) {
+					replaceSubstring(str, i, currIndex, asciiNumber);
 				}
 			}
 		}
 	}
 }
 
-//Make it look better
 void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 
 	std::stringstream rowStream(rowStr);
@@ -202,6 +169,7 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 
 		if (flagIsInText) {
 			rowStream.getline(buff, GlobalConstants::BUFFER_SIZE, '<');
+
 			if (containsSlashTH(buff) || containsSlashTD(buff)) {
 				flagIsInText = false;
 				containsValueToBeConverted(table.rows[table.rowsCount].cells[table.colsCount].cell);
@@ -209,21 +177,15 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 			}
 			else {
 				strcat(table.rows[table.rowsCount].cells[table.colsCount].cell, buff);
-				std::cout << "Full Header " << table.rows[table.rowsCount].cells[table.colsCount].cell;
-				
 			}
 			
 		}
 
-
 		rowStream.clear();
 		rowStream.getline(buff, GlobalConstants::FIELD_MAX_SIZE, GlobalConstants::CLOSE_BRACKET);
 
-
-
-		//defence to always get the right colls count and cell idx
+		
 		if(containsSlashTH(buff) || containsSlashTD(buff)) {
-			///work it later
 			containsValueToBeConverted(table.rows[table.rowsCount].cells[table.colsCount].cell);
 			flagIsInText = false;
 			table.colsCount++;
@@ -235,30 +197,24 @@ void parseFromRow(const char* rowStr, HTMLTABLE& table) {
 		}
 
 		if (containsTR(buff)) {
-			//table.rowsCount++;
 			table.colsCount = 0;
-			//flagIsTR = true;
 		}
 		
 		else if (containsTH(buff)) {
 			table.rows[table.rowsCount].cells[table.colsCount].isHeader = true;
 			rowStream.getline(table.rows[table.rowsCount].cells[table.colsCount].cell, GlobalConstants::BUFFER_SIZE, '<');
-			std::cout << "Header " << table.rows[table.rowsCount].cells[table.colsCount].cell << std::endl;
 			flagIsInText = true;
 		}
 
 		else if (containsTD(buff)) {
 			rowStream.getline(table.rows[table.rowsCount].cells[table.colsCount].cell, GlobalConstants::BUFFER_SIZE, '<');
-			std::cout << "Der " << table.rows[table.rowsCount].cells[table.colsCount].cell << std::endl;
 			flagIsInText = true;
 		}
 
 		else {
 			continue;
 		}
-	
 	}
-
 }
 
 void parseFromFile(std::istream& ifs, HTMLTABLE& result) {
@@ -286,17 +242,10 @@ void parseFromFile(const char* fileName, HTMLTABLE& table)
 	//return table = parseFromFile(ifs);
 }
 
-
-//Works look at it on Sunday
 void calculateMaxWidthCells(const HTMLTABLE& table,size_t* maxWidths) {
-	
-
-	// Calculate maximum width for each column
 	for (size_t i = 0; i < table.rowsCount; ++i) {
 		for (size_t j = 0; j < table.colsCount; ++j) {
 			int currentWidth = strlen(table.rows[i].cells[j].cell);
-
-			
 
 			if (currentWidth > maxWidths[j]) {
 				maxWidths[j] = currentWidth;
@@ -306,10 +255,9 @@ void calculateMaxWidthCells(const HTMLTABLE& table,size_t* maxWidths) {
 }
 
 char* getPadding(size_t cellLength, size_t maximumWidth) {
-	
-
 	int end = maximumWidth - cellLength;
 	char* ptr = new char[end];
+
 	for (size_t i = 0; i < end; i++)
 	{
 		ptr[i] = ' ';
@@ -349,59 +297,103 @@ void edit(HTMLTABLE& table, size_t rowNumber, size_t colNumber,char* newValue) {
 void remove(HTMLTABLE& table, size_t rowNumber) {
 	
 	for (size_t i = rowNumber-1; i < table.rowsCount; i++){
-		for (size_t j= 0; j< table.colsCount; j++)
-		{
+		for (size_t j= 0; j< table.colsCount; j++){
 			strcpy(table.rows[i].cells[j].cell, table.rows[i + 1].cells[j].cell);
-		}
-		
+		}	
 	}
 
 	table.rowsCount--;
 }
 
-void add(HTMLTABLE& table, size_t rowNumber, const char* arrayValues) {
+void add(HTMLTABLE& table, int rowNumber, const char* arrayValues) {
+	if (rowNumber > table.rowsCount + 1) {
+		std::cerr << "Invalid row number. Cannot insert beyond current row count.\n";
+		return;
+	}
+
+	// Increment row count
 	table.rowsCount++;
 	rowNumber--;
 
-	for (size_t i = table.rowsCount-1; i >= rowNumber; i--) {
-		for (size_t j = 0; j < table.colsCount; j++)
-		{
+	
+	for (int i = table.rowsCount - 1; i >= rowNumber; i--) {
+		for (size_t j = 0; j < table.colsCount; j++) {
 			strcpy(table.rows[i].cells[j].cell, table.rows[i - 1].cells[j].cell);
 		}
-
 	}
 
 	std::stringstream valueStream(arrayValues);
 	for (size_t j = 0; j < table.colsCount && !valueStream.eof(); j++) {
 		valueStream.getline(table.rows[rowNumber].cells[j].cell, GlobalConstants::FIELD_MAX_SIZE, ',');
 	}
-	
 }
 
+void readUntilPrint(HTMLTABLE& table) {
+	char buff[GlobalConstants::BUFFER_SIZE];
+
+	do
+	{
+		
+		std::cin.getline(buff, GlobalConstants::BUFFER_SIZE);
+		std::stringstream manipulation(buff);
+
+		char command[GlobalConstants::BUFFER_SIZE];
+		manipulation.getline(command, GlobalConstants::BUFFER_SIZE, ' ');
+
+		if (containsRemove(command)) {
+			unsigned rowNumber;
+			manipulation>>rowNumber;
+
+			remove(table,rowNumber);
+			printTable(table);
+			std::cout << std::endl;
+		}
+
+		else if (containsEdit(command)) {
+			unsigned rowNum = 0,colNum = 0;
+			char newValue[GlobalConstants::FIELD_MAX_SIZE] = "\0";
+
+			manipulation >> rowNum;
+			manipulation.ignore();
+			manipulation >> colNum;
+			manipulation.ignore();
+			manipulation.getline(newValue, GlobalConstants::FIELD_MAX_SIZE);
+
+			edit(table, rowNum, colNum, newValue);
+			printTable(table);
+			std::cout << std::endl;
+		}
+
+		else if (containsAdd(command)) {	
+			unsigned rowNum;
+			char arrayValues[GlobalConstants::FIELD_MAX_SIZE];
+
+			manipulation >> rowNum;
+			manipulation.get();
+			manipulation.getline(arrayValues, GlobalConstants::FIELD_MAX_SIZE);
+
+			add(table, rowNum, arrayValues);
+			printTable(table);
+			std::cout << std::endl;
+		}
+		else if (containsPrint(command)) {
+			printTable(table);
+			return;
+		}
+		else {
+			std::cout << "Incorrect command! Please try again!" << std::endl;
+		}
+
+	} while (true);
+}
 
 int main() {
-	//HTMLCODE.txt
 	char fileName[GlobalConstants::MAX_FILENAME_SIZE];
 	std::cin >> fileName;
+
 	HTMLTABLE table;
 	parseFromFile(fileName, table);
 
 	std::cin.ignore();
-	char buff[GlobalConstants::BUFFER_SIZE];
-	do
-	{
-		std::cin.getline(buff, GlobalConstants::BUFFER_SIZE,';');
-		std::stringstream manipulations(buff);
-
-		char manimupalationToBeMAde = manipulations.get();
-
-		//if(manimupalationToBeMAde=='')
-
-
-	} while (true);
-
-	//while(std::getline(buffComands,50))
-
-	printTable(table);
-
+	readUntilPrint(table);
 }
