@@ -3,6 +3,7 @@ namespace GLOBAL_CONSTANTS{
 	constexpr unsigned firstLengthSeries = 10;
 }
 
+
 class NumSeries {
 private:
 	int a_0 = 0;
@@ -13,6 +14,7 @@ private:
 	void copyFrom(const NumSeries& other);
 	void free();
 public:
+
 	NumSeries() = default;
 	NumSeries(const int newa_0, int (*newFuncPointer)(int));
 	NumSeries(const NumSeries& other);
@@ -25,11 +27,16 @@ public:
 
 	//int getFuncPointer()  const;
 	void setFuncPointer(int(*newFuncPointer)(int));
+
 	void setNumSeries();
 	
 
 	int getNumberAtIndex(unsigned index);
+
 	int getNextNumber();
 
 	void setSeriesUpToIndex(const unsigned index);
+
+	bool isNumberInSeries(int number);
 };
+
