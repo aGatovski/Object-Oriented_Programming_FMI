@@ -1,5 +1,8 @@
 #include "MultiSet.h"
+#include <iostream>
 #include <exception>
+#include<fstream>
+
 namespace GLOBAL_CONSTANTS {
 	constexpr size_t BYTE_SIZE = 8;
 };
@@ -23,7 +26,6 @@ namespace HELPER_FUNCTIONS {
 };
 using namespace HELPER_FUNCTIONS;
 
-//add try catch
 MultiSet::MultiSet(size_t  n, size_t  k) : maxNum(n) , bits(k){
 	// maxNum + 1 in order to Add the zero ;
 	// +1 for accurate bucketCount;
@@ -86,8 +88,6 @@ bool MultiSet::addNumber(size_t num) {
 		data[currentBucket] |= (tempMask >> bitsInSecondBucket);
 		data[currentBucket + 1] = ((data[currentBucket + 1] <<= bitsInSecondBucket) >>= bitsInSecondBucket);
 		data[currentBucket + 1] |= (tempMask << (BYTE_SIZE - bitsInSecondBucket));
-
-		
 	}
 
 	else {
@@ -108,6 +108,10 @@ bool MultiSet::addNumber(size_t num) {
 }
 
 size_t MultiSet::getCountOfOccurrences(size_t num) const {
+	if (num > maxNum) {
+		return 0;
+	}
+	
 	size_t currentBucket = (num * bits) / BYTE_SIZE;
 	size_t firstIndexNumber = (num * bits) % BYTE_SIZE;
 
@@ -178,30 +182,23 @@ bool MultiSet::numberInTwoBuckets(size_t num) const{
 	return  ((  (num*bits) % BYTE_SIZE) + bits) > BYTE_SIZE;
 }
 
-//!proveri gi
-//! nesh ne mi se haresvat
 MultiSet intersect(const MultiSet& s1, const MultiSet& s2){
 	if (s1.bits != s2.bits) {
 		//sig mojesh ama shte e tolkova trujdno che prosto ne!
 		throw std::logic_error("Cannot intersect sets with diferent bit counts");
 	}
-	size_t maxNum = std::min(s1.maxNum, s2.maxNum);
+	size_t maxNum = (s1.maxNum < s2.maxNum) ? s1.maxNum : s2.maxNum;
+
 	MultiSet result(maxNum, s1.bits);
 
 	for (size_t i = 0; i <= maxNum; i++) {
-		// Check if the number exists in both multisets
-		if (s1.getCountOfOccurrences(i) > 0 && s2.getCountOfOccurrences(i) > 0) {
-
-			// Add the number to the intersection multiset
-			size_t minimalOccurances = std::min(s1.getCountOfOccurrences(i), s2.getCountOfOccurrences(i));
+		size_t minimalOccurances = (s1.getCountOfOccurrences(i) < s2.getCountOfOccurrences(i)) ? s1.getCountOfOccurrences(i) : s2.getCountOfOccurrences(i);
 			for (size_t j = 0; j < minimalOccurances; j++) {
 				result.addNumber(i);
 			}
-		}
 	}
 
 	return result;
-	
 }
 
 MultiSet difference(const MultiSet& s1, const MultiSet& s2) {
@@ -209,14 +206,11 @@ MultiSet difference(const MultiSet& s1, const MultiSet& s2) {
 		throw std::logic_error("Cannot compute difference between sets with different bit counts");
 	}
 
-	size_t maxNum = std::max(s1.maxNum, s2.maxNum);
+	size_t maxNum = (s1.maxNum > s2.maxNum) ? s1.maxNum : s2.maxNum;
 	MultiSet result(maxNum, s1.bits);
 
-	// Iterate over each possible number up to the maximum number in s1
 	for (size_t num = 0; num <= s1.maxNum; ++num) {
-		// Check if the current number is present in s1 but not in s2
 		if (s1.getCountOfOccurrences(num) > 0 && s2.getCountOfOccurrences(num) == 0) {
-			// Add the current number to the result multiset
 			result.addNumber(num);
 		}
 	}
@@ -229,13 +223,13 @@ MultiSet unify(const MultiSet& s1, const MultiSet& s2) {
 		throw std::logic_error("Cannot unify sets with different bit counts");
 	}
 
-	size_t maxNum = std::max(s1.maxNum, s2.maxNum);
+	size_t maxNum = (s1.maxNum > s2.maxNum) ? s1.maxNum : s2.maxNum;
 	MultiSet result(maxNum, s1.bits);
 
 	// Iterate over each possible number up to the maximum number in either set
 	for (size_t num = 0; num <= maxNum; ++num) {
 		// Determine the maximum occurrences of the current number in either set
-		size_t maxOccurrences = std::max(s1.getCountOfOccurrences(num), s2.getCountOfOccurrences(num));
+		size_t maxOccurrences = (s1.getCountOfOccurrences(num) > s2.getCountOfOccurrences(num)) ? s1.getCountOfOccurrences(num) : s2.getCountOfOccurrences(num);
 
 		// Add the current number to the result multiset the maximum number of times it occurs in either set
 		for (size_t count = 0; count < maxOccurrences; ++count) {
@@ -244,4 +238,55 @@ MultiSet unify(const MultiSet& s1, const MultiSet& s2) {
 	}
 
 	return result;
+}
+
+void MultiSet::complete() {
+	for (size_t num = 0; num <= maxNum; ++num) {
+		size_t count = getCountOfOccurrences(num);
+		size_t complementCount = (1 << bits) - 1 - count; // Calculate complement count
+		if (complementCount > 0) {
+			// Add the complement count of the number to the multiset
+			for (size_t i = count; i < complementCount; ++i) {
+				addNumber(num);
+			}
+		}
+	}
+}
+
+void MultiSet::serialise(const char* fileName) {
+	std::ofstream out(fileName, std::ios::binary | std::ios::out);
+		
+	if (!out.is_open()) {
+		throw std::runtime_error("Error opening file for writing!");
+	}
+	out.write((const char*)&maxNum,sizeof(maxNum));
+	out.write((const char*)&bits, sizeof(bits));
+	out.write((const char*)&bucketsCount, sizeof(bucketsCount));
+	out.write((const char*)&maxCountOccurences, sizeof(maxCountOccurences));
+	/* unsigned char* data = nullptr;
+    size_t maxNum = 0;
+    size_t bits = 0;
+	size_t bucketsCount=0;
+    size_t maxCountOccurences = 0;*/
+
+	for (size_t i = 0; i < bucketsCount; i++)
+	{
+		out.write((const char*)&data[i], sizeof(unsigned char));
+	}
+}
+void MultiSet::deserialise(const char* fileName) {
+	std::ifstream in(fileName, std::ios::binary | std::ios::in);
+
+	if (!in.is_open()) {
+		throw std::runtime_error("Error opening file for reading!");
+	}
+	in.read((char*)&maxNum, sizeof(maxNum));
+	in.read((char*)&bits, sizeof(bits));
+	in.read((char*)&bucketsCount, sizeof(bucketsCount));
+	in.read((char*)&maxCountOccurences, sizeof(maxCountOccurences));
+
+	for (size_t i = 0; i < bucketsCount; i++)
+	{
+		in.read((char*)&data[i], sizeof(unsigned char));
+	}
 }
