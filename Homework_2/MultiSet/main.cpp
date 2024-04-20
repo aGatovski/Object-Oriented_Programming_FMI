@@ -68,6 +68,10 @@ int main()
         set8.serialise("nqkude");
 
     }
+    catch (const std::invalid_argument& ex)
+    {
+        std::cout << ex.what();
+    }
     catch (const std::runtime_error& ex)
     {
         std::cout << ex.what();
@@ -77,6 +81,10 @@ int main()
     {
         set8.deserialise("nqkude");
 
+    }
+    catch (const std::invalid_argument& ex)
+    {
+        std::cout << ex.what();
     }
     catch (const std::runtime_error& ex)
     {
