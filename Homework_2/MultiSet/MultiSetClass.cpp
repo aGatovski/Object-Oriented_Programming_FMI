@@ -27,8 +27,9 @@ namespace HELPER_FUNCTIONS {
 using namespace HELPER_FUNCTIONS;
 
 MultiSet::MultiSet(size_t  n, size_t  k) : maxNum(n) , bits(k){
-	// maxNum + 1 in order to Add the zero ;
-	// +1 for accurate bucketCount;
+	if (k == 0) {
+		throw std::invalid_argument("Invalid parameter k for MultiSet constructor");
+	}
 	bucketsCount = ((maxNum + 1) / bits) + 1;
 	maxCountOccurences = (1 << k) - 1;
 	data = new unsigned char [bucketsCount]{ 0 };
@@ -57,7 +58,7 @@ bool MultiSet::addNumber(size_t num) {
 		throw std::out_of_range("Number must be greater than 0 and equal to or less than n!");
 	}
 	if (getCountOfOccurrences(num) == maxCountOccurences) {
-		throw std::exception("Max occurences of this number has been reached! Try a different one!");
+		throw std::runtime_error("Max occurrences of this number has been reached! Try a different one!");
 	}
 	size_t currentBucket = (num * bits) / BYTE_SIZE;
 	size_t firstIndexNumber = (num*bits) % BYTE_SIZE;
@@ -184,7 +185,6 @@ bool MultiSet::numberInTwoBuckets(size_t num) const{
 
 MultiSet intersect(const MultiSet& s1, const MultiSet& s2){
 	if (s1.bits != s2.bits) {
-		//sig mojesh ama shte e tolkova trujdno che prosto ne!
 		throw std::logic_error("Cannot intersect sets with diferent bit counts");
 	}
 	size_t maxNum = (s1.maxNum < s2.maxNum) ? s1.maxNum : s2.maxNum;
@@ -240,7 +240,7 @@ MultiSet unify(const MultiSet& s1, const MultiSet& s2) {
 	return result;
 }
 
-void MultiSet::complete() {
+void MultiSet::complete() noexcept {
 	for (size_t num = 0; num <= maxNum; ++num) {
 		size_t count = getCountOfOccurrences(num);
 		size_t complementCount = (1 << bits) - 1 - count; // Calculate complement count
@@ -263,17 +263,13 @@ void MultiSet::serialise(const char* fileName) {
 	out.write((const char*)&bits, sizeof(bits));
 	out.write((const char*)&bucketsCount, sizeof(bucketsCount));
 	out.write((const char*)&maxCountOccurences, sizeof(maxCountOccurences));
-	/* unsigned char* data = nullptr;
-    size_t maxNum = 0;
-    size_t bits = 0;
-	size_t bucketsCount=0;
-    size_t maxCountOccurences = 0;*/
 
 	for (size_t i = 0; i < bucketsCount; i++)
 	{
 		out.write((const char*)&data[i], sizeof(unsigned char));
 	}
 }
+
 void MultiSet::deserialise(const char* fileName) {
 	std::ifstream in(fileName, std::ios::binary | std::ios::in);
 
