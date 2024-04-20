@@ -123,7 +123,7 @@ bool ModifiableIntegersFunction::operator>=(const ModifiableIntegersFunction& ot
 	return true;
 }
 
-bool operator||(const ModifiableIntegersFunction& lhs, const ModifiableIntegersFunction& rhs) {
+bool operator||(const ModifiableIntegersFunction& lhs, const ModifiableIntegersFunction& rhs)  {
 	double ratio = 0.0;
 	bool ratioSet = false;
 	
@@ -154,6 +154,43 @@ bool operator||(const ModifiableIntegersFunction& lhs, const ModifiableIntegersF
 	}
 
 	return true;
+}
+
+ModifiableIntegersFunction& ModifiableIntegersFunction::operator^=(size_t k) {
+	for (size_t i = 0; i < GLOBAL_CONSTANTS::MAX_SIZE_INT16_ARRAY; i++){
+		if (!isRemoved(functionValues[i])) {
+			for (size_t i = 0; i < k; i++) {
+
+				functionValues[i] = funcPointer(functionValues[i]);
+			}
+		}
+	}
+	return *this;
+}
+
+ModifiableIntegersFunction operator^(const ModifiableIntegersFunction& other, size_t k) {
+	ModifiableIntegersFunction result(other);
+	result ^= k;
+	return result;
+}
+
+ModifiableIntegersFunction& ModifiableIntegersFunction::operator*=(const ModifiableIntegersFunction& other) {
+	for (size_t i = 0; i < other.removedValuesCount; i++)
+	{
+		if (!isRemoved(other.removedValues[i])) {
+			removedValues[removedValuesCount++] = other.removedValues[i];
+		}
+	}
+	for (size_t i = 0; i < GLOBAL_CONSTANTS::MAX_SIZE_INT16_ARRAY; i++){
+		if (!isRemoved(functionValues[i])) {
+			other.functionValues[i] = funcPointer(other.functionValues[i]);
+			functionValues[i] = other.functionValues[i];
+		}
+	}
+}
+
+ModifiableIntegersFunction operator*(const ModifiableIntegersFunction& lhs, const ModifiableIntegersFunction& rhs) {
+	
 }
 
 bool ModifiableIntegersFunction::isRemoved(int16_t x) const noexcept {
