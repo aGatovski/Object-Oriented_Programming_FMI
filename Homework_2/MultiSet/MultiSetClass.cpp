@@ -103,7 +103,6 @@ bool MultiSet::addNumber(size_t num) {
 		data[currentBucket] &= tempMaskWith1;
 
 		data[currentBucket] |= (bitsToSet)<< (BYTE_SIZE - bits - firstIndexNumber);
-
 	}
 	return false;
 }
@@ -243,10 +242,9 @@ MultiSet unify(const MultiSet& s1, const MultiSet& s2) {
 void MultiSet::complete() noexcept {
 	for (size_t num = 0; num <= maxNum; ++num) {
 		size_t count = getCountOfOccurrences(num);
-		size_t complementCount = (1 << bits) - 1 - count; // Calculate complement count
-		if (complementCount > 0) {
-			// Add the complement count of the number to the multiset
-			for (size_t i = count; i < complementCount; ++i) {
+		size_t completeCount = (1 << bits) - 1 - count;
+		if (completeCount > 0) {
+			for (size_t i = count; i < completeCount; ++i) {
 				addNumber(num);
 			}
 		}
@@ -254,6 +252,10 @@ void MultiSet::complete() noexcept {
 }
 
 void MultiSet::serialise(const char* fileName) {
+	if (!fileName) {
+		throw std::invalid_argument("Filename cannot be nullptr.");
+	}
+
 	std::ofstream out(fileName, std::ios::binary | std::ios::out);
 		
 	if (!out.is_open()) {
@@ -271,6 +273,10 @@ void MultiSet::serialise(const char* fileName) {
 }
 
 void MultiSet::deserialise(const char* fileName) {
+	if (!fileName) {
+		throw std::invalid_argument("Filename cannot be nullptr.");
+	}
+
 	std::ifstream in(fileName, std::ios::binary | std::ios::in);
 
 	if (!in.is_open()) {
