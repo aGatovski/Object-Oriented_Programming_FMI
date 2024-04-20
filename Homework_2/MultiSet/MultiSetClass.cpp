@@ -270,6 +270,8 @@ void MultiSet::serialise(const char* fileName) {
 	{
 		out.write((const char*)&data[i], sizeof(unsigned char));
 	}
+
+	out.close();
 }
 
 void MultiSet::deserialise(const char* fileName) {
@@ -291,4 +293,5 @@ void MultiSet::deserialise(const char* fileName) {
 	{
 		in.read((char*)&data[i], sizeof(unsigned char));
 	}
+	in.close();
 }
