@@ -4,6 +4,87 @@
 
 int main()
 {
+    MultiSet set8(9, 3);
+    MultiSet set9(7, 3);
+    //Just a preview of how exceptions should be caught
+    //----------------------------------------------------------
+   
+    try
+    {
+        MultiSet set(9, 3);
+        
+    }
+    catch (const std::invalid_argument& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        set8.addNumber(0);
+
+    }
+    catch (const std::out_of_range& ex)
+    {
+        std::cout << ex.what();
+    }
+    catch (const std::runtime_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        MultiSet set10 = intersect(set8, set9);
+
+    }
+    catch (const std::logic_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        MultiSet set10 = difference(set8, set9);
+
+    }
+    catch (const std::logic_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        MultiSet set10 = unify(set8, set9);
+
+    }
+    catch (const std::logic_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        set8.serialise("nqkude");
+
+    }
+    catch (const std::runtime_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    try
+    {
+        set8.deserialise("nqkude");
+
+    }
+    catch (const std::runtime_error& ex)
+    {
+        std::cout << ex.what();
+    }
+
+    //Implementation
+    //-----------------------------------
     MultiSet set(9,3);
     set.addNumber(0);
     set.addNumber(0);
@@ -62,5 +143,4 @@ int main()
 
     //std::cout << std::endl;
 }
-
 
