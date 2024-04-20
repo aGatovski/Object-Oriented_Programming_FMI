@@ -16,6 +16,7 @@ private:
     size_t maxCountOccurences = 0;
 
 public:
+    MultiSet() = default;
     MultiSet(size_t  n, size_t  k);
     MultiSet(const MultiSet& other);
     MultiSet& operator=(const MultiSet& other);
@@ -35,7 +36,7 @@ public:
     friend MultiSet intersect(const MultiSet& s1, const MultiSet& s2);// Сечение / Разлика на две мултимножества.
     friend MultiSet difference(const MultiSet& s1, const MultiSet& s2);
     friend MultiSet unify(const MultiSet& s1, const MultiSet& s2);//  Допълнение на мултимножество(ако x се е срещал p пъти, то в допълнението се среща 2 ^ k - 1 - p пъти).
-     void complete() noexcept;
+    void complete() noexcept;
 
 private:
     void free();
