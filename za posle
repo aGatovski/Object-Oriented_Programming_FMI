@@ -1,0 +1,293 @@
+#pragma once
+#include <iostream>
+
+class CarPart {
+public:
+	CarPart(const char* _manufactorerName, const char* _partDescription);
+	CarPart(const CarPart& other);
+	CarPart& operator=(const CarPart& other);
+	CarPart(CarPart&& other) noexcept ;
+	CarPart& operator=(CarPart&& other) noexcept;
+	~CarPart();
+
+	void setManufactorerName(const char* _manufactorerName);
+	const char* getManufactorerName() const;
+
+	void setpartDescription(const char* _partDescription);
+	const char* getpartDescription() const;
+
+	friend std::ostream& operator<<(std::ostream& os, const CarPart& other );
+
+private:
+	unsigned int ID = 0;
+	char* manufactorerName = nullptr;
+	char* partDescription = nullptr;
+
+	static unsigned existingParts;
+	//static unsigned livingInstances;
+
+	void free();
+	void copyFrom(const CarPart& other);
+	void moveFrom(CarPart&& other) noexcept;
+};
+
+
+#include "CarPart.h"
+#include <exception>
+unsigned CarPart::existingParts = 1;
+	
+CarPart::CarPart(const char* _manufactorerName, const char* _partDescription) {
+	ID = (existingParts++);
+
+}
+
+CarPart::CarPart(const CarPart& other) {
+	copyFrom(other);
+}
+
+CarPart& CarPart::operator=(const CarPart& other) {
+	if (this != &other) {
+		free();
+		copyFrom(other);
+	}
+
+	return *this;
+}
+
+CarPart::CarPart(CarPart&& other) noexcept {
+	moveFrom(std::move(other));
+}
+
+CarPart& CarPart::operator=(CarPart&& other) noexcept {
+	if (this != &other) {
+		free();
+		moveFrom(std::move(other));
+	}
+
+	return *this;
+}
+
+CarPart::~CarPart() {
+	free();
+}
+
+void CarPart::setManufactorerName(const char* _manufactorerName) {
+	if (!_manufactorerName) {
+		throw;
+	}
+
+	manufactorerName = new char[strlen(_manufactorerName)];
+	strcpy(manufactorerName, _manufactorerName);
+}
+
+const char* CarPart::getManufactorerName() const {
+	return manufactorerName;
+}
+
+void CarPart::setpartDescription(const char* _partDescription) {
+	if (!_partDescription) {
+		throw;
+	}
+
+	partDescription = new char[strlen(_partDescription)];
+	strcpy(partDescription, _partDescription);
+}
+
+const char* CarPart::getpartDescription() const {
+	return partDescription;
+}
+
+void CarPart::free() {
+	ID = 0;
+	delete[] manufactorerName;
+	manufactorerName = nullptr;
+	delete[] partDescription;
+	partDescription = nullptr;
+}
+
+void CarPart::copyFrom(const CarPart& other) {
+	ID = other.ID;
+	manufactorerName = new char[strlen(other.manufactorerName)];
+	strcpy(manufactorerName, other.manufactorerName);
+	partDescription = new char[strlen(other.partDescription)];
+	strcpy(partDescription, other.partDescription);
+}
+
+void CarPart::moveFrom(CarPart&& other)  noexcept  {
+	ID = other.ID;
+	manufactorerName = other.manufactorerName;
+	other.manufactorerName = nullptr;
+
+	partDescription = other.partDescription;
+	other.partDescription = nullptr;
+}
+
+std::ostream& operator<<(std::ostream& os, const CarPart& other) {
+	os << other.ID << " by " << other.manufactorerName << " - ";
+}
+
+
+#pragma once
+#include <iostream>
+#include "CarPart.h"
+
+namespace TIRE_CONSTANTS {
+	constexpr short MIN_WIDTH = 155;
+	constexpr short MAX_WIDTH = 365;
+	constexpr short MIN_PROFILE = 30;
+	constexpr short MAX_PROFILE = 80;
+	constexpr short MIN_DIAMETER = 13;
+	constexpr short MAX_DIAMETER = 21;
+}
+
+class Tire : public CarPart{
+public:
+	Tire(unsigned short _tireWidth, unsigned short _tireProfile, unsigned short _tireDiameter, const char* _manufactorerName, const char* _partDescription);
+
+	friend std::ostream& operator<<(std::ostream& os, const Tire& other);
+private:
+	unsigned short tireWidth = 0; // width is in milimiters between 155 and 365
+	unsigned short tireProfile = 0; // profile is between 30 - 80 
+	unsigned short tireDiameter = 0; // Diameter is in inches 13-21
+};
+
+
+#include "Tire.h"
+using namespace TIRE_CONSTANTS;
+
+Tire::Tire(unsigned short _tireWidth, unsigned short _tireProfile, unsigned short _tireDiameter, const char* _manufactorerName, const char* _partDescription) : CarPart(_manufactorerName,_partDescription) {
+	if (_tireWidth<MIN_WIDTH || _tireWidth>MAX_WIDTH) {
+		throw std::invalid_argument("Invalid tire width!");
+	}
+
+	if (_tireProfile<MIN_PROFILE || _tireProfile>MAX_PROFILE) {
+		throw std::invalid_argument("Invalid tire profile!");
+	}
+
+	if (_tireDiameter<MIN_DIAMETER || _tireDiameter>MAX_DIAMETER) {
+		throw std::invalid_argument("Invalid tire diameter");
+	}
+
+	tireWidth = _tireWidth;
+	tireProfile = _tireProfile;
+	tireDiameter = _tireDiameter;
+}
+std::ostream& operator<<(std::ostream& os, const Tire& other) {
+	operator<<(os,other);
+	os << other.tireWidth << " / " << other.tireProfile << "R" << other.tireDiameter; 
+}
+
+
+#pragma once
+#include "CarPart.h"
+#include <iostream>
+
+class Battery : public CarPart {
+public:
+	Battery(unsigned short batteryCapacity, const char* ID, const char* _manufactorerName, const char* _partDescription);
+	Battery(const Battery& other);
+	Battery& operator=(const Battery& other);
+	Battery(Battery&& other) noexcept ;
+	Battery& operator=(Battery&& other) noexcept;
+	~Battery();
+
+	friend std::ostream& operator<<(std::ostream& os, const Battery& other);
+
+private:
+	unsigned short batteryCapacity = 0; // amper - hours
+	char* ID = nullptr;
+
+	void free();
+	void copyFrom(const Battery& other);
+	void moveFrom(Battery&& other) noexcept;
+};
+
+
+#include "Battery.h"
+Battery::Battery(unsigned short _batteryCapacity, const char* _ID, const char* _manufactorerName, const char* _partDescription) : CarPart(_manufactorerName, _partDescription) {
+	batteryCapacity = _batteryCapacity;
+	ID = new char[strlen(_ID)];
+	strcpy(ID, _ID);
+}
+
+Battery::Battery(const Battery& other) : CarPart(other) {
+	copyFrom(other);
+}
+Battery& Battery::operator=(const Battery& other)   {
+	if (this != &other) {
+		CarPart::operator=(other);
+		free();
+		copyFrom(other);
+	}
+
+	return *this;
+}
+Battery::Battery(Battery&& other) noexcept : CarPart(std::move(other)){
+	moveFrom(std::move(other));
+}
+
+Battery& Battery::operator=(Battery&& other) noexcept {
+	if (this != &other) {
+		CarPart::operator=(std::move(other));
+		free();
+		moveFrom(std::move(other));
+	}
+
+	return *this;
+}
+
+Battery::~Battery() {
+	free();
+}
+
+
+void Battery::free() {
+	batteryCapacity = 0; 
+	delete[] ID;
+	ID = nullptr;
+}
+
+void Battery::copyFrom(const Battery& other) {
+	batteryCapacity = other.batteryCapacity;
+	ID = new char[strlen(other.ID)];
+	strcpy(ID, other.ID);
+}
+
+void Battery::moveFrom(Battery&& other) noexcept {
+	batteryCapacity = other.batteryCapacity;
+	batteryCapacity = 0;
+
+	ID = other.ID;
+	other.ID = nullptr;
+}
+
+std::ostream& operator<<(std::ostream& os, const Battery& other) {
+	operator<<(os, other);
+	os<<other.batteryCapacity << "amph"
+}
+
+#pragma once
+#include <iostream>
+#include "CarPart.h"
+
+class Engine : public CarPart {
+public:
+	Engine(unsigned short _horsePower, const char* _manufactorerName, const char* _partDescription);
+
+	friend std::ostream& operator<<(std::ostream& os, const Engine& other);
+
+private:
+	unsigned short horsePower = 0;
+};
+
+
+
+#include "Engine.h"
+Engine::Engine(unsigned short _horsePower, const char* _manufactorerName, const char* _partDescription) : CarPart(_manufactorerName, _partDescription){
+	horsePower = _horsePower;
+}
+
+std::ostream& operator<<(std::ostream& os, const Engine& other) {
+	operator<<(os, other);
+	os << other.horsePower<< " hp";
+}
