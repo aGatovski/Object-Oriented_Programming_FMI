@@ -12,7 +12,7 @@ using namespace CarConstants;
 
 class Car {
 public:
-	Car(FuelTank _carFuelTank, Engine* _carEngine, Tire* _carTires, Battery* _carBattery, unsigned _carKilometers, unsigned _carWeight);
+	Car(const FuelTank& _carFuelTank, Engine* _carEngine, Tire** _carTires, Battery* _carBattery, unsigned _carKilometers, unsigned _carWeight);
 	Car(const Car& other);
 	Car& operator=(const Car& other);
 	Car(Car&& other) noexcept;
@@ -27,7 +27,7 @@ public:
 private:
 	FuelTank carFuelTank;
 	Engine* carEngine = nullptr;
-	Tire* carTires = nullptr;
+	Tire** carTires = nullptr;
 	Battery* carBattery = nullptr;
 	unsigned carKilometers = 0;
 	unsigned carWeight = 0;

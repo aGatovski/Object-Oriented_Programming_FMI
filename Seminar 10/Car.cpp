@@ -1,9 +1,12 @@
 #include "Car.h"
 
-Car::Car(FuelTank _carFuelTank, Engine* _carEngine, Tire* _carTires, Battery* _carBattery, 
-	unsigned _carKilometers, unsigned _carWeight):FuelTank(_carFuelTank), Engine(_carEngine),Tire(_carTires), Battery(_carBattery){
+Car::Car(const FuelTank& _carFuelTank, Engine* _carEngine, Tire** _carTires, Battery* _carBattery, 
+	unsigned _carKilometers, unsigned _carWeight): FuelTank(_carFuelTank){//prenasochi pointerite ot lista
 	if (_carKilometers < 0 || _carWeight < 0) {
 		throw std::invalid_argument("Kilometers and weight must be non-negative.");
+	}
+	for (size_t i = 0; i < 4; i++){
+		carTires[i] = _carTires[i];
 	}
 	carKilometers = _carKilometers;
 	carWeight = _carWeight;
@@ -39,9 +42,6 @@ Car::~Car(){
 }
 
 void Car::free(){
-	delete carEngine;
-	delete[] carTires;
-	delete carBattery;
 	carEngine = nullptr;
 	carTires = nullptr;
 	carBattery = nullptr;
@@ -61,7 +61,7 @@ void Car::drive(double km) {
 }
 
 Car* Car::dragRace(Car* car1, Car* car2) {
-	if (car1->getFuelTank().getFuelLevel() < raceDistance && car2->getFuelTank().getFuelLevel() < raceDistance) {
+	if ((*car1).getFuelTank().getFuelLevel() < raceDistance && car2->getFuelTank().getFuelLevel() < raceDistance) {
 		return nullptr;
 	}
 
