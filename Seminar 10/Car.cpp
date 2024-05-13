@@ -5,6 +5,9 @@ Car::Car(const FuelTank& _carFuelTank, Engine* _carEngine, Tire** _carTires, Bat
 	if (_carKilometers < 0 || _carWeight < 0) {
 		throw std::invalid_argument("Kilometers and weight must be non-negative.");
 	}
+	carEngine=_carEngine;
+	carBattery=_carBattery;
+
 	for (size_t i = 0; i < 4; i++){
 		carTires[i] = _carTires[i];
 	}
