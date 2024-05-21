@@ -19,8 +19,6 @@ private:
 	bool state = 1; //  0 on 1 off
 	char* checkBoxName = nullptr;
 
-
-
 	void copyFrom(const CheckBox& other);
 	void moveFrom(CheckBox&& other) noexcept;
 	void free();

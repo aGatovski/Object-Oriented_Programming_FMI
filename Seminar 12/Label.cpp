@@ -6,22 +6,23 @@ Label::Label()
     labelText = '\0';
 }
 
-Label::Label(const Label& other)
+Label::Label(const Label& other) : Controls(other)
 {
     copyFrom(other);
 }
 
-Label& Label::operator=(const Label& other)
+Label& Label::operator=(const Label& other) 
 {
     if (this != &other) {
         free();
+        Controls::operator=(other);
         copyFrom(other);
     }
     return *this;
     // TODO: insert return statement here
 }
 
-Label::Label(Label&& other) noexcept
+Label::Label(Label&& other)  noexcept : Controls(other)
 {
     moveFrom(std::move(other));
 }
@@ -30,6 +31,7 @@ Label& Label::operator=(Label&& other) noexcept
 {
     if (this != &other) {
         free();
+        Controls::operator=(std::move(other));
         moveFrom(std::move(other));
     }
     return *this;
@@ -54,18 +56,18 @@ Controls* Label::clone() const
 
 void Label::copyFrom(const Label& other) 
 {
-    controlWidth = other.controlWidth;
-    controlHeight = other.controlHeight;
+  /*  controlWidth = other.controlWidth;
+    controlHeight = other.controlHeight;*/
     labelText = new char[strlen(other.labelText) + 1];
     strcpy(labelText, other.labelText);
 }
 
 void Label::moveFrom(Label&& other) noexcept
 {
-    controlWidth = other.controlWidth;
+   /* controlWidth = other.controlWidth;
     controlHeight = other.controlHeight;
     other.controlHeight = 0;
-    other.controlWidth = 0;
+    other.controlWidth = 0;*/
     labelText = other.labelText;
     other.labelText = nullptr;
 }
