@@ -57,6 +57,7 @@ RadioButton::~RadioButton()
 
 void RadioButton::setDataDialog(const char* dataText)
 {
+    delete[] radioButtonOptions[chosen];
     radioButtonOptions[chosen] = new char[strlen(dataText) + 1];
     strcpy(radioButtonOptions[chosen], dataText);
 }

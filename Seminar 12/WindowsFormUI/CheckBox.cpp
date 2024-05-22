@@ -45,6 +45,7 @@ CheckBox::~CheckBox()
 
 void CheckBox::setDataDialog(const char* dataText)
 {
+    delete[] checkBoxName;
     checkBoxName = new char[strlen(dataText) + 1];
     strcpy(checkBoxName, dataText);
 

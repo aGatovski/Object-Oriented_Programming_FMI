@@ -1,4 +1,4 @@
 #pragma once
 #include"Controls.h"
 
-Controls* controlFactory(Controls controlType);
+Controls* controlFactory(ControlType controlType);

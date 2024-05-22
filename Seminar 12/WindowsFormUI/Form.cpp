@@ -1,6 +1,8 @@
 #include "Form.h"
+#include"ControlFactory.h"
 
-Form::Form(unsigned _formWidth, unsigned _formHeight, const char* _formName) : formWidth(_formWidth), formHeight(_formHeight)
+
+Form::Form(size_t _formWidth, size_t _formHeight, const char* _formName) : formWidth(_formWidth), formHeight(_formHeight)
 {
 	formName = new char[strlen(_formName) + 1];
 	strcpy(formName, _formName);
@@ -41,7 +43,7 @@ Form::~Form()
 	free();
 }
 
-void Form::resize()
+void Form::resizeData()
 {
 	Controls** dataTemp = new Controls*[dataCapacity * 2];
 	for (size_t i = 0; i < dataSize; i++){
@@ -51,19 +53,58 @@ void Form::resize()
 	data = dataTemp;
 }
 
-//void Form::addControl(Controls controlType)
-//{
-//	if (dataSize == dataCapacity) {
-//		resize();
-//	}
-//
-//	data[dataSize++] = Controls(controlType);
-//}
+void Form::resizeForm(size_t _formWidth, size_t _formHeight)
+{
+	formWidth = _formWidth;
+	formHeight = _formHeight;
+}
+
+void Form::resizeControlAtIndex(size_t index, size_t _controlWidth, size_t _controlHeight)
+{
+	if (index > dataSize) {
+		throw std::out_of_range("The index given is out of bounds!");
+	}
+
+	if (((data[index]->getStartingHeight() + _controlHeight) > formHeight) || ((data[index]->getStartingWidth() + _controlWidth) > formWidth)) {
+		throw std::invalid_argument("Invalid controler size!");
+	}
+	
+	data[index]->resize( _controlWidth, _controlHeight);
+
+}
+
+void Form::changeControlLocationAtIndex(size_t index, size_t _controlStartingWidth, size_t _controlStartingHeight)
+{
+	if (index > dataSize) {
+		throw std::out_of_range("The index given is out of bounds!");
+	}
+	if (((data[index]->getHeight() + _controlStartingHeight) > formHeight) || ((data[index]->getWidth() + _controlStartingWidth) > formWidth)) {
+		throw std::invalid_argument("Invalid controler location!");
+	}
+
+
+}
+
+void Form::change(size_t index, const char* controlText)
+{
+	if (index > dataSize) {
+		throw std::out_of_range("The index given is out of bounds!");
+	}
+	data[index]->setDataDialog(controlText);
+}
+
+void Form::addControl(ControlType controlType)
+{
+	if (dataSize == dataCapacity) {
+		resizeData();
+	}
+	data[dataSize++] = controlFactory(controlType);
+}
 
 void Form::addControl(const Controls& control)
 {
 	if (dataSize == dataCapacity) {
-		resize();
+		resizeData();
 	}
 	data[dataSize++] = control.clone();
 }
@@ -71,7 +112,7 @@ void Form::addControl(const Controls& control)
 void Form::addLabel()
 {
 	if (dataSize == dataCapacity) {
-		resize();
+		resizeData();
 	}
 	data[dataSize++] = new Label();
 }
@@ -79,14 +120,14 @@ void Form::addLabel()
 void Form::addCheckBox()
 {
 	if (dataSize == dataCapacity) {
-		resize();
+		resizeData();
 	}
 }
 
 void Form::addRadioButton()
 {
 	if (dataSize == dataCapacity) {
-		resize();
+		resizeData();
 	}
 }
 

@@ -1,6 +1,6 @@
 #include "Label.h"
 
-Label::Label()
+Label::Label() 
 {
     labelText =new char[1];
     labelText = '\0';
@@ -19,10 +19,9 @@ Label& Label::operator=(const Label& other)
         copyFrom(other);
     }
     return *this;
-    // TODO: insert return statement here
 }
 
-Label::Label(Label&& other)  noexcept : Controls(other)
+Label::Label(Label&& other)  noexcept : Controls(std::move(other))
 {
     moveFrom(std::move(other));
 }
@@ -35,7 +34,6 @@ Label& Label::operator=(Label&& other) noexcept
         moveFrom(std::move(other));
     }
     return *this;
-    // TODO: insert return statement here
 }
 
 Label::~Label()
@@ -45,6 +43,7 @@ Label::~Label()
 
 void Label::setDataDialog(const char* dataText)
 {
+    delete[] labelText;
     labelText = new char[strlen(dataText) + 1];
     strcpy(labelText, dataText);
 }
