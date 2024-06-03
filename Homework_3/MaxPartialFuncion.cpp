@@ -19,3 +19,8 @@ int32_t MaxPartialFunction::operator()(int32_t x) const
 
 	return maxValue;
 }
+
+PartialFunction* MaxPartialFunction::clone() const
+{
+	return new MaxPartialFunction(*this);
+}

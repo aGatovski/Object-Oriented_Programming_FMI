@@ -27,8 +27,8 @@ bool CriteriaFunction<F>::isDefinedAt(int32_t x) const
 template<typename F>
 int32_t CriteriaFunction<F>::operator()(int32_t x) const
 {
-    if(obj(x).isDefinedAt)
-     return obj.getSecond();
+    if( isDefinedAt(x))
+     return obj(x).getSecond();
 
     else {
         throw std::invalid_argument("Function is not defined for the given X!");

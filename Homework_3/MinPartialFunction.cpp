@@ -19,3 +19,8 @@ int32_t MinPartialFunction::operator()(int32_t x) const
 
 	return minValue;
 }
+
+PartialFunction* MinPartialFunction::clone() const
+{
+	return new MinPartialFunction(*this);
+}

@@ -9,5 +9,6 @@ public:
 
 
 protected:
+
 	const PartialFunctionCollection& data; 
 };

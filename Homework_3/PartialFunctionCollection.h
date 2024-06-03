@@ -26,6 +26,7 @@ public:
 	
 
 	void addPartialFunction(const PartialFunction& newFunction);
+	void addPartialFunction(const PartialFunction* newFunction);
 	size_t getSize() const;
 	PartialFunction& operator[](size_t index) const;
 private:

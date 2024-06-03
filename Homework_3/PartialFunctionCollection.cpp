@@ -58,6 +58,14 @@ void PartialFunctionCollection::addPartialFunction(const PartialFunction& newFun
 	data[size++] = newFunction.clone();
 }
 
+void PartialFunctionCollection::addPartialFunction(const PartialFunction* newFunction)
+{
+	if (size == capacity) {
+		resize();
+	}
+	data[size++] = newFunction->clone();
+}
+
 size_t PartialFunctionCollection::getSize() const
 {
 	return size;

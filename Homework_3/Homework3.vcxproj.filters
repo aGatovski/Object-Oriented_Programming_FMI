@@ -39,6 +39,9 @@
     <ClCompile Include="FunctionFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BoolFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PartialFunction.h">
@@ -68,7 +71,7 @@
     <ClInclude Include="MinMaxFunctionWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FunctionFactory.h">
+    <ClInclude Include="BoolFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

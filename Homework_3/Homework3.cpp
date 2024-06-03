@@ -2,7 +2,6 @@
 #include"PartialFunction.h"
 #include"CriteriaFunction.hpp"
 #include "PartialFunctionCollection.h"
-#include "FunctionFactory.cpp"
 int main()
 {
     

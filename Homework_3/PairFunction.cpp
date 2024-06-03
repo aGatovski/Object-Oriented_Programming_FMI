@@ -3,11 +3,6 @@
 
 //ако кажат разписваш ис дефайнд да нямаш ф
 
-bool PairFunction::isDefinedAt(int32_t x) const
-{
-	return false;
-}
-
 PairFunction::PairFunction(const int32_t* fileInput, size_t _size) :size(_size/2)
 {
 	for (size_t i = 0; i < size; i++){

@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoolFunction.cpp" />
     <ClCompile Include="FunctionFactory.cpp" />
     <ClCompile Include="Homework3.cpp" />
     <ClCompile Include="IdentityFunction.cpp" />
@@ -137,8 +138,8 @@
     <ClCompile Include="PartialFunctionCollection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoolFunction.h" />
     <ClInclude Include="CriteriaFunction.hpp" />
-    <ClInclude Include="FunctionFactory.h" />
     <ClInclude Include="IdentityFunction.h" />
     <ClInclude Include="MaxPartialFuncion.h" />
     <ClInclude Include="MinMaxFunctionWrapper.h" />
