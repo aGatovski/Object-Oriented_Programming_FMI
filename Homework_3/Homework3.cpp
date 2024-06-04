@@ -2,9 +2,19 @@
 #include"PartialFunction.h"
 #include"CriteriaFunction.hpp"
 #include "PartialFunctionCollection.h"
+#include "FunctionFactory.cpp"
+
+namespace {
+    constexpr char fileName[] = "func.dat";
+}
+
+
 int main()
 {
-    
+
+    PartialFunctionCollection p;
+    readFromFile(fileName,p);
+
 }
 
 /* while (true) {

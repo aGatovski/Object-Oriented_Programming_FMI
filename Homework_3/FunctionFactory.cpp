@@ -10,11 +10,7 @@
 #include "IdentityFunction.h"
 #include "BoolFunction.h"
 
-namespace {
-    constexpr char fileName[] = "func.dat";
-}
-
-void readFromFile(PartialFunctionCollection& collection) 
+void readFromFile(const char* fileName,PartialFunctionCollection& collection)
 {
     unsigned N, T; 
 
@@ -30,25 +26,32 @@ void readFromFile(PartialFunctionCollection& collection)
     switch (T)
     {
        case 0:  
-        in.read((char*)arr, N * sizeof(int));
-        collection.addPartialFunction( new CriteriaFunction<PairFunction>( PairFunction(arr,N)));
+            in.read((char*)arr, N * sizeof(int));
+            collection.addPartialFunction( new CriteriaFunction<PairFunction>( PairFunction(arr,N)));
      
-            break;
+        break;
        case 1:
             in.read((char*)arr, N * sizeof(int));
             collection.addPartialFunction(new CriteriaFunction <IdentityFunction>(IdentityFunction(arr, N)));
         break;
         
     case 2:
-      in.read((char*)arr, N * sizeof(int));
+            in.read((char*)arr, N * sizeof(int));
             collection.addPartialFunction(new CriteriaFunction <BoolFunction>(BoolFunction(arr, N)));
-        break;/*
+        break;
     case 3:
+        char buff[1024];
+        for (size_t i = 0; i < N; i++){
+            in.getline(buff, 1024);
+            PartialFunctionCollection temporary;
+            readFromFile(buff, temporary);
+            collection.addPartialFunction(new MaxPartialFunction( temporary ));
+        }
         break;
     case 4:
-        break;*/
- /*   default:
-        break;*/
+        break;
+    default:
+        break;
     }
 
     in.close();
