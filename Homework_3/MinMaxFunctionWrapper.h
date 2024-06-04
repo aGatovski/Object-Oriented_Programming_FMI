@@ -7,8 +7,7 @@ public:
 	MinMaxFunctionWrapper(const PartialFunctionCollection& _data);
 	bool isDefinedAt(int32_t x) const override;
 
-
 protected:
 
-	const PartialFunctionCollection& data; 
+	const PartialFunctionCollection data; 
 };

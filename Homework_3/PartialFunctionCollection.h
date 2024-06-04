@@ -23,7 +23,6 @@ public:
 	PartialFunctionCollection& operator=(PartialFunctionCollection&& other) noexcept;
 	~PartialFunctionCollection();
 
-	
 
 	void addPartialFunction(const PartialFunction& newFunction);
 	void addPartialFunction(const PartialFunction* newFunction);

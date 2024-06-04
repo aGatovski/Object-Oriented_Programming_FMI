@@ -73,8 +73,7 @@ size_t PartialFunctionCollection::getSize() const
 
 PartialFunction& PartialFunctionCollection::operator[](size_t index) const
 {
-	return *(data[index]);
-	// TODO: insert return statement here
+	return *this->data[index];
 }
 
 void PartialFunctionCollection::free()

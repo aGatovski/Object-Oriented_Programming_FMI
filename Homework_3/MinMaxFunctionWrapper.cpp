@@ -5,9 +5,9 @@ MinMaxFunctionWrapper::MinMaxFunctionWrapper(const PartialFunctionCollection& _d
 
 bool MinMaxFunctionWrapper::isDefinedAt(int32_t x) const
 {
-	unsigned length = data.getSize();
+	unsigned length = this->data.getSize();
 	for (size_t i = 0; i < length; i++){
-		if (!data[i].isDefinedAt(x)) {
+		if (! (this->data[i].isDefinedAt(x)) ) {
 			return false;
 		}
 	}

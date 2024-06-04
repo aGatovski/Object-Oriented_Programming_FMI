@@ -1,5 +1,9 @@
 #include "MinPartialFunction.h"
 
+MinPartialFunction::MinPartialFunction(const PartialFunctionCollection& _data) :MinMaxFunctionWrapper(_data)
+{
+}
+
 int32_t MinPartialFunction::operator()(int32_t x) const
 {
 	if (!this->isDefinedAt(x)) {
