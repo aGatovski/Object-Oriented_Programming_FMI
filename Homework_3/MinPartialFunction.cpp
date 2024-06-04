@@ -12,8 +12,8 @@ int32_t MinPartialFunction::operator()(int32_t x) const
 
 	int32_t minValue = data[0](x);
 
-    unsigned length = data.getSize();
-	for (size_t i = 1; i < length; i++){
+	unsigned length = data.getSize();
+	for (size_t i = 1; i < length; i++) {
 		int32_t nextValue = data[i](x);
 
 		if (nextValue < minValue) {

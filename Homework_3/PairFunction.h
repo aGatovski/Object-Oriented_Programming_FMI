@@ -3,7 +3,7 @@
 #include"PartialFunction.h"
 #include"Pair.hpp"
 
-class PairFunction  {
+class PairFunction {
 private:
 	int32_t* pairFunctionDefinedPar = nullptr;
 	int32_t* pairFunctionValues = nullptr;
@@ -15,7 +15,7 @@ public:
 	PairFunction& operator=(const PairFunction& other);
 	PairFunction& operator=(PairFunction&& other) noexcept;
 	~PairFunction();
-	Pair<bool,int32_t> operator()(int32_t x) const;
+	Pair<bool, int32_t> operator()(int32_t x) const;
 private:
 	void free();
 	void copyFrom(const PairFunction& other);

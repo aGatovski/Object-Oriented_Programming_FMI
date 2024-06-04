@@ -4,7 +4,7 @@ using namespace PARTIAL_FUNCTION_COLLECTION_CONSTANTS;
 
 void PartialFunctionCollection::resize()
 {
-	PartialFunction** dataTemp = new PartialFunction*[capacity*=2];
+	PartialFunction** dataTemp = new PartialFunction * [capacity *= 2];
 	for (size_t i = 0; i < size; i++) {
 		dataTemp[i] = data[i];
 	}
@@ -12,9 +12,9 @@ void PartialFunctionCollection::resize()
 	data = dataTemp;
 }
 
-PartialFunctionCollection::PartialFunctionCollection(): size(COLLECTION_SIZE), capacity(COLLECTION_CAPACITY) 
+PartialFunctionCollection::PartialFunctionCollection() : size(COLLECTION_SIZE), capacity(COLLECTION_CAPACITY)
 {
-    data = new PartialFunction*[capacity];
+	data = new PartialFunction * [capacity];
 }
 
 PartialFunctionCollection::PartialFunctionCollection(const PartialFunctionCollection& other)
@@ -89,7 +89,7 @@ void PartialFunctionCollection::copyFrom(const PartialFunctionCollection& other)
 {
 	capacity = other.capacity;
 	size = other.size;
-	data = new PartialFunction*[capacity];
+	data = new PartialFunction * [capacity];
 
 	for (size_t i = 0; i < size; i++) {
 		data[i] = other.data[i]->clone();

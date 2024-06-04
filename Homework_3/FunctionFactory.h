@@ -5,9 +5,9 @@
 #include"PairFunction.h"
 #include "PartialFunctionCollection.h"
 #include "CriteriaFunction.hpp"
-#include "MaxPartialFuncion.h"
+#include "MaxPartialFunction.h"
 #include "MinPartialFunction.h"
 #include "IdentityFunction.h"
 #include "BoolFunction.h"
-
-void readFromFile(const char* fileName, PartialFunctionCollection& collection);
+#include "ExtremumFunction.h"
+PartialFunction* readFromFile(const char* fileName);

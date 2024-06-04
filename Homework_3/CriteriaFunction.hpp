@@ -6,11 +6,11 @@
 template<typename F>
 class CriteriaFunction : public PartialFunction {
 private:
-    const F& obj;
+    const F obj;
 public:
     CriteriaFunction(const F& _obj);
     bool isDefinedAt(int32_t x) const override;
-    int32_t operator()(int32_t x) const override; 
+    int32_t operator()(int32_t x) const override;
     PartialFunction* clone() const override;
 };
 
@@ -27,8 +27,8 @@ bool CriteriaFunction<F>::isDefinedAt(int32_t x) const
 template<typename F>
 int32_t CriteriaFunction<F>::operator()(int32_t x) const
 {
-    if( isDefinedAt(x))
-     return obj(x).getSecond();
+    if (isDefinedAt(x))
+        return obj(x).getSecond();
 
     else {
         throw std::invalid_argument("Function is not defined for the given X!");
