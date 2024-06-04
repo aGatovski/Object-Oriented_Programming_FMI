@@ -11,4 +11,7 @@
 #include "IdentityFunction.h"
 #include "BoolFunction.h"
 
+void readDynamicCharArrayFromBinaryFile(std::ifstream& in, char*& str);
+MaxPartialFunction* createMaxFunction(std::ifstream& ifs, unsigned int N);
+MinPartialFunction* createMinFunction(std::ifstream& ifs, unsigned int N);
 PartialFunction* readFromFile(const char* fileName);

@@ -1,7 +1,6 @@
 #include "PartialFunctionCollection.h"
 using namespace PARTIAL_FUNCTION_COLLECTION_CONSTANTS;
 
-
 void PartialFunctionCollection::resize()
 {
 	PartialFunction** dataTemp = new PartialFunction * [capacity *= 2];

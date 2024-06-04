@@ -12,7 +12,7 @@ void readDynamicCharArrayFromBinaryFile(std::ifstream& in, char*& str) {
 MaxPartialFunction* createMaxFunction(std::ifstream& ifs,unsigned int N) {
 
     PartialFunctionCollection extremeFunctions ;
-     char* buff = nullptr;
+    char* buff = nullptr;
    
     for (size_t i = 0; i < N; i++) {
       
@@ -22,21 +22,26 @@ MaxPartialFunction* createMaxFunction(std::ifstream& ifs,unsigned int N) {
         extremeFunctions.addPartialFunction(ptr);
         
     }
-    delete buff;
+    delete[] buff;
+    buff = nullptr;
     return new MaxPartialFunction(extremeFunctions);
 }
 
 MinPartialFunction* createMinFunction(std::ifstream& ifs, unsigned int N) {
 
     PartialFunctionCollection extremeFunctions;
-    char buff[1024];
+    char* buff = nullptr;
+
     for (size_t i = 0; i < N; i++) {
-        ifs.getline(buff, 1024);
+
+        readDynamicCharArrayFromBinaryFile(ifs, buff);
         PartialFunction* ptr;
         ptr = readFromFile(buff);
         extremeFunctions.addPartialFunction(ptr);
 
     }
+    delete[] buff;
+    buff = nullptr; 
     return new MinPartialFunction(extremeFunctions);
 }
 
@@ -68,8 +73,6 @@ PartialFunction* readFromFile(const char* fileName)
          return createMaxFunction(in,N);
     case 4:
         return createMinFunction(in, N);
-       
-        break;
     default:
         break;
     }
