@@ -38,5 +38,5 @@ int32_t CriteriaFunction<F>::operator()(int32_t x) const
 template<typename F>
 PartialFunction* CriteriaFunction<F>::clone() const
 {
-    return new CriteriaFunction(*this);
+    return new CriteriaFunction<F>(*this);
 }

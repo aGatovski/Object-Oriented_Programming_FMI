@@ -42,10 +42,10 @@
     <ClCompile Include="PairFunction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PartialFunctionCollection.cpp">
+    <ClCompile Include="ExtremumFunction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ExtremumFunction.cpp">
+    <ClCompile Include="PartialFunctionCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,13 +77,16 @@
     <ClInclude Include="MinPartialFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PartialFunctionCollection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Pair.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtremumFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PartialFunctionCollection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

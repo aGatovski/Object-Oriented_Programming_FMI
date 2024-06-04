@@ -1,9 +1,6 @@
 #include "MaxPartialFunction.h"
-
-MaxPartialFunction::MaxPartialFunction(const ExtremumFunction& _data) :ExtremumFunction(_data)
-{
-
-}
+MaxPartialFunction::MaxPartialFunction(const PartialFunctionCollection& _data) : MinMaxFunctionWrapper(_data)
+{ }
 
 int32_t MaxPartialFunction::operator()(int32_t x) const
 {
@@ -11,11 +8,11 @@ int32_t MaxPartialFunction::operator()(int32_t x) const
 		throw std::invalid_argument("Function is not defined for the given X!");
 	}
 
-	int32_t maxValue = (*data[0])(x);
+	int32_t maxValue = data[0](x);
 
-	unsigned length = getSize();
+	unsigned length = data.getSize();
 	for (size_t i = 1; i < length; i++) {
-		int32_t nextValue = (*data[i])(x);
+		int32_t nextValue = data[i](x);
 
 		if (nextValue > maxValue) {
 			maxValue = nextValue;

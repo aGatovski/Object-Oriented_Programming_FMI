@@ -1,10 +1,10 @@
 #pragma once
 #include<iostream>
-#include"ExtremumFunction.h"
+#include"MinMaxFunctionWrapper.h"
 
-class MaxPartialFunction : public ExtremumFunction {
+class MaxPartialFunction : public MinMaxFunctionWrapper {
 public:
-	MaxPartialFunction(const ExtremumFunction& _data);
+	MaxPartialFunction(const PartialFunctionCollection& _data);
 	int32_t operator()(int32_t x) const override;
 	PartialFunction* clone() const override;
 };

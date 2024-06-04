@@ -1,8 +1,5 @@
 ﻿#include "PairFunction.h"
 
-
-//ако кажат разписваш ис дефайнд да нямаш ф
-
 PairFunction::PairFunction(const int32_t* fileInput, size_t _size) :size(_size)
 {
 	pairFunctionDefinedPar = new int32_t[size];
