@@ -17,6 +17,7 @@ size_t TaskManager::loginUser(const MyString& _username, const MyString& _passwo
 	size_t length = users.getSize();
 	for (size_t i = 0; i < length; i++) {
 		if (users[i].getUsername() == _username) {
+			if(users[i].getPassword() == _password)
 			return i;
 		}
 	}

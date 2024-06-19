@@ -1,17 +1,7 @@
 ﻿#pragma once
 #include <iostream>
 #include "MyString.h"
-/*Една задача се състои от следните атрибути:
-id - уникален номер на задачата; 
-name - име на задачата;
-due_date (optional) - дата, до която със сигурност трябва да изпълним задачата;
-status - може да е ON_HOLD, IN_PROCESS, DONE, OVERDUE;
-description - описание на задачата;
-
-*Note: За конкретен due_date не можем да имаме повече от една задача с едно и също име.
-*Note: За проекта се позволява използването на библиотеката <ctime> за работата с време и <iomanip> за parse-ването от стринг към дата.
-*/
-
+#pragma warning(disable : 4996)
 enum class TaskStatus {
 	ON_HOLD,
 	IN_PROCESS,
@@ -21,15 +11,23 @@ enum class TaskStatus {
 
 class Task {
 public:
+	Task()=default;
 	Task(const MyString& _name, time_t _dueDate , const MyString& _description);
 
+	void printTaskInformation() const;
 
-	~Task();
+	//Get
+	const MyString& getName() const;
+	const MyString& getDescription() const;
+	time_t getDueDate() const;
+	size_t getID() const;
+	const TaskStatus& getStatus() const;
+	const MyString getTaskStatusToPrint() const;
 
+	//Set
 	void setName(const MyString& newName); 
 	void setDescription(const MyString& newDescription);
 	void setStatus(const TaskStatus& newStatus);
-
 private:
 	size_t ID;
 	MyString name;
