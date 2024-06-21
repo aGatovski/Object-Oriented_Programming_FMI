@@ -1,8 +1,8 @@
 #include "Task.h"
- size_t Task::existingTask = 0;
+size_t Task::existingTask = 0;
 
 Task::Task(const MyString& _name, time_t _dueDate, const MyString& _description) : name(_name), description(_description),
-dueDate(_dueDate), ID(existingTask++) 
+dueDate(_dueDate), ID(existingTask++)
 { }
 
 void Task::printTaskInformation() const {
@@ -65,10 +65,9 @@ void Task::setStatus(const TaskStatus& newStatus)
 	status = newStatus;
 }
 
-//bool operator==(const Task& lhs, const Task& rhs)
-//{
-//	
-//	return (lhs.getName() == rhs.getName())
-//		&& (lhs.getDescription() == rhs.getDescription())
-//		&& (lhs.getDueDate() == rhs.getDueDate());
-//}
+bool operator==(const Task& lhs, const Task& rhs)
+{
+	return (lhs.getName() == rhs.getName())
+		&& (lhs.getDescription() == rhs.getDescription())
+		&& (lhs.getDueDate() == rhs.getDueDate());
+}

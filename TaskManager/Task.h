@@ -1,4 +1,5 @@
-﻿#pragma once
+#pragma once
+#pragma once
 #include <iostream>
 #include "MyString.h"
 #pragma warning(disable : 4996)
@@ -11,8 +12,8 @@ enum class TaskStatus {
 
 class Task {
 public:
-	Task()=default;
-	Task(const MyString& _name, time_t _dueDate , const MyString& _description);
+	Task() = default;
+	Task(const MyString& _name, time_t _dueDate, const MyString& _description);
 
 	void printTaskInformation() const;
 
@@ -25,7 +26,7 @@ public:
 	const MyString getTaskStatusToPrint() const;
 
 	//Set
-	void setName(const MyString& newName); 
+	void setName(const MyString& newName);
 	void setDescription(const MyString& newDescription);
 	void setStatus(const TaskStatus& newStatus);
 private:
@@ -37,3 +38,5 @@ private:
 
 	static size_t existingTask;
 };
+
+bool operator==(const Task& lhs, const Task& rhs);

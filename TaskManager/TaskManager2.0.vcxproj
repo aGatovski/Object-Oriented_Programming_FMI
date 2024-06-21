@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{a85679bb-000e-4f08-ab6d-21aebe02c876}</ProjectGuid>
-    <RootNamespace>TaskManager</RootNamespace>
+    <ProjectGuid>{a043af65-88ea-4510-8e2b-f73641a29783}</ProjectGuid>
+    <RootNamespace>TaskManager20</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,18 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollectionTaskManagers.cpp" />
+    <ClCompile Include="CollectionUsers.cpp" />
     <ClCompile Include="MyString.cpp" />
-    <ClCompile Include="MyTaskManager.cpp" />
     <ClCompile Include="Profile.cpp" />
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskManager.cpp" />
+    <ClCompile Include="TaskManager2.0.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collaboration.h" />
+    <ClInclude Include="CollectionTaskManagers.h" />
+    <ClInclude Include="CollectionUsers.h" />
     <ClInclude Include="MyString.h" />
-    <ClInclude Include="MyTaskManager.h" />
+    <ClInclude Include="Pair.hpp" />
     <ClInclude Include="Profile.h" />
     <ClInclude Include="Task.h" />
+    <ClInclude Include="TaskManager.h" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
