@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <iostream>
 #include "MyString.h"
 #pragma warning(disable : 4996)

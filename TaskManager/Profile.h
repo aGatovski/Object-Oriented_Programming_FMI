@@ -1,9 +1,8 @@
 #pragma once
 #include"MyString.h"
-#include "TaskManager.h"
 class Profile {
 public:
-	Profile() = default;
+	Profile() = default;  // Default Constructor
 	Profile(const MyString& _username, const MyString& _password);
 
 	const MyString& getUsername() const;
@@ -12,5 +11,4 @@ public:
 private:
 	MyString username;
 	MyString password;
-	//TaskManager* taskManager;
 };

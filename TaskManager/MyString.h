@@ -1,5 +1,6 @@
 #pragma once
 #pragma once
+#pragma once
 #include <iostream>
 
 namespace StringHelperFunctions {

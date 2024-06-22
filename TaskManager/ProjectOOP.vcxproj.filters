@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TaskManager2.0.cpp">
+    <ClCompile Include="ProjectOOP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MyString.cpp">
@@ -24,30 +24,27 @@
     <ClCompile Include="Task.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CollectionUsers.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Profile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TaskManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CollectionTaskManagers.cpp">
+    <ClCompile Include="TaskHolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CollaborationTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collaboration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CollectionUsers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MyString.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Profile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Task.h">
@@ -56,13 +53,19 @@
     <ClInclude Include="TaskManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collaboration.h">
+    <ClInclude Include="Profile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Pair.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollectionTaskManagers.h">
+    <ClInclude Include="Collaboration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollaborationTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
