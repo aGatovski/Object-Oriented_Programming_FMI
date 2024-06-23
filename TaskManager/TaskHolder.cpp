@@ -79,17 +79,6 @@ void TaskHolder::deleteTask(size_t _ID)
 	}
 }
 
-//void TaskHolder::deleteTask(const MyString& taskName)
-//{
-//		size_t length = tasks.getSize();
-//		for (size_t i = 0; i < length; i++)
-//		{
-//			if (tasks[i].getName() == taskName) {
-//				tasks.popAt(i);
-//			}
-//		}
-//		throw std::logic_error("No task with this name exists!");
-//}
 
 void TaskHolder::getTask(const MyString& name) const
 {
@@ -316,7 +305,6 @@ void TaskHolder::assignTask(const MyString& collaborationName, const Profile& us
 	{
 		size_t indexCorrespondingCollaboration = getCollaborationIndexByName(collaborationName);
 		collabs[indexCorrespondingCollaboration]->assignTask(&user,taskName,taskDueDate,description);
-		//tasks.pushBack(*collabs[indexCorrespondingCollaboration]->getTaskByName(taskName));
 	}
 	catch (const std::exception& e)
 	{
@@ -341,7 +329,6 @@ void TaskHolder::deleteCollaboration(const MyString& name,const Profile& assigne
 		size_t indexCorrespondingCollaboration = getCollaborationIndexByName(name);
 		size_t iDCorrespondingTask = collabs[indexCorrespondingCollaboration]->getTasksIDByAssignee(assignee.getUsername());
 		deleteTask(iDCorrespondingTask);
-		//collabs[indexCorrespondingCollaboration] = nullptr;
 		collabs.popAt(indexCorrespondingCollaboration);
 	}
 	catch (const std::exception& e)

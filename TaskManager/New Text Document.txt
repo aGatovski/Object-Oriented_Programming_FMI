@@ -1,0 +1,4 @@
+The project should function properly!
+I did not have time to make a better UI, so there are some issues when writing commands!
+For example, if you want to use a command that does not take any extra inputs please press "space" after writing it and the press "enter"!
+All function only work with the given interface so even the smallest grammatical error or missclick will cause an error!
