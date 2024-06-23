@@ -14,7 +14,6 @@ void TaskHolder::addTask(const MyString& taskName, time_t taskDueDate, const MyS
 	tasks.pushBack(newTask);
 }
 
-
 void TaskHolder::addTask(const Task& newTask)
 {
 	size_t length = tasks.getSize();
@@ -33,7 +32,6 @@ void TaskHolder::updateTaskName(size_t _ID, const MyString& newTaskName)
 	try
 	{
 		size_t indexCorrespondingTask = getTaskIndexByID(tasks, _ID);
-		/*size_t indexCorrespondingTask = getTaskIndexByID(_ID);*/
 		tasks[indexCorrespondingTask].setName(newTaskName);
 	}
 	catch (const std::exception& e)
@@ -47,7 +45,6 @@ void TaskHolder::startTask(size_t _ID)
 	try
 	{
 		size_t indexCorrespondingTask = getTaskIndexByID(tasks, _ID);
-		//size_t indexCorrespondingTask = getTaskIndexByID(_ID);
 		tasks[indexCorrespondingTask].setStatus(TaskStatus::IN_PROCESS);
 	}
 	catch (const std::exception& e)
@@ -61,7 +58,6 @@ void TaskHolder::updateTaskDescription(size_t _ID, const MyString& newDescriptio
 	try
 	{
 		size_t indexCorrespondingTask = getTaskIndexByID(tasks, _ID);
-		//size_t indexCorrespondingTask = getTaskIndexByID(_ID);
 		tasks[indexCorrespondingTask].setDescription(newDescription);
 	}
 	catch (const std::exception& e)
@@ -75,7 +71,6 @@ void TaskHolder::deleteTask(size_t _ID)
 	try
 	{
 		size_t indexCorrespondingTask = getTaskIndexByID(tasks, _ID);
-		//size_t indexCorrespondingTask = getTaskIndexByID(_ID);
 		tasks.popAt(indexCorrespondingTask);
 	}
 	catch (const std::exception& e)
@@ -84,24 +79,24 @@ void TaskHolder::deleteTask(size_t _ID)
 	}
 }
 
-void TaskHolder::deleteTask(const MyString& taskName)
-{
-		size_t length = tasks.getSize();
-		for (size_t i = 0; i < length; i++)
-		{
-			if (tasks[i].getName() == taskName) {
-				tasks.popAt(i);
-			}
-		}
-		throw std::logic_error("No task with this name exists!");
-}
+//void TaskHolder::deleteTask(const MyString& taskName)
+//{
+//		size_t length = tasks.getSize();
+//		for (size_t i = 0; i < length; i++)
+//		{
+//			if (tasks[i].getName() == taskName) {
+//				tasks.popAt(i);
+//			}
+//		}
+//		throw std::logic_error("No task with this name exists!");
+//}
 
 void TaskHolder::getTask(const MyString& name) const
 {
 	try
 	{
 
-		size_t indexCorrespondingTask = (name);
+		size_t indexCorrespondingTask = getTaskIndexByID(name);
 		tasks[indexCorrespondingTask].printTaskInformation();
 	}
 	catch (const std::exception& e)
@@ -145,6 +140,13 @@ void TaskHolder::addTaskToDashboard(size_t _ID)
 	try
 	{
 		size_t indexCorrespondingTask = getTaskIndexByID(_ID);
+		size_t length = dashboard.getSize();
+		for (size_t i = 0; i < length; i++)
+		{
+			if (dashboard[i]->getID() == _ID) {
+				throw std::logic_error("This task is already on the dashboard");
+			}
+		}
 		dashboard.pushBack(&tasks[indexCorrespondingTask]);
 	}
 	catch (const std::exception& e)

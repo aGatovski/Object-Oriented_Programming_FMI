@@ -41,6 +41,9 @@ public:
     friend MyString operator+(const MyString& lhs, const MyString& rhs);
     friend std::istream& operator>>(std::istream& is, MyString& str);
 
+    MyString substr(size_t begin, size_t howMany) const;
+    bool isDigit() const;
+   
 private:
     void copyFrom(const MyString& other);
     void moveFrom(MyString&& other) noexcept;

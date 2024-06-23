@@ -135,6 +135,8 @@
     <ClCompile Include="Task.cpp" />
     <ClCompile Include="TaskHolder.cpp" />
     <ClCompile Include="TaskManager.cpp" />
+    <ClCompile Include="TaskManagerFactory.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collaboration.h" />
@@ -146,6 +148,7 @@
     <ClInclude Include="TaskHolder.h" />
     <ClInclude Include="TaskManager.h" />
     <ClInclude Include="TaskManagerFactory.h" />
+    <ClInclude Include="UserInterface.h" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

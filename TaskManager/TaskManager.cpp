@@ -1,30 +1,4 @@
 #include "TaskManager.h"
-namespace HPF {
-	time_t stringToTime(const MyString& dateStr) {
-		std::tm tm = {};
-		char delimiter;
-
-		std::stringstream ss(dateStr.c_str());
-		ss >> tm.tm_year >> delimiter >> tm.tm_mon >> delimiter >> tm.tm_mday;
-
-		if (ss.fail() || delimiter != '-') {
-			throw std::runtime_error("Failed to parse date string");
-		}
-
-		// Adjust tm_year and tm_mon as they are counted from 1900 and 0 respectively
-		tm.tm_year -= 1900;
-		tm.tm_mon -= 1;
-
-		// Convert tm structure to time_t
-		time_t time = std::mktime(&tm);
-		if (time == -1) {
-			throw std::runtime_error("Failed to convert tm structure to time_t");
-		}
-
-		return time;
-	}
-}
-
 using namespace SourceFail;
 
 void TaskManager::registerUser(const MyString& _username, const MyString& _password)
@@ -80,24 +54,15 @@ void TaskManager::loginUser(const MyString& _username, const MyString& _password
 
 void TaskManager::logout()
 {
-	
-	std::ofstream ofs(failUsers, std::ios::binary | std::ios::_Nocreate /*| std::ios::ate*/);
-	if (!ofs.is_open()) {
-		throw std::runtime_error("file failed to open!");
-	}
-
-
-
 	indexLoggedUser = -1;
-	ofs.close();
-	//logic for saving everything
+	std::cout << "User logged out successfully!" << std::endl;
 }
 
 void TaskManager::exit()
 {
-	//logout();
+	logout();
 
-	std::ofstream ofsProfiles(SourceFail::failUsers, std::ios::_Nocreate | std::ios::binary);
+	std::ofstream ofsProfiles(failUsers, std::ios::binary);
 	if (!ofsProfiles.is_open()) {
 		throw std::runtime_error("Failed to open profiles.dat for writing!");
 	}
@@ -130,7 +95,7 @@ void TaskManager::exit()
 		ofsCollabs.write(reinterpret_cast<const char*>(&collabHolder[i]), sizeof(Collaboration));
 	}
 	ofsCollabs.close();
-	//std::terminate();
+	std::exit(0);
 }
 
 void TaskManager::addTask(const MyString& taskName, time_t taskDueDate, const MyString& description)
@@ -141,6 +106,7 @@ void TaskManager::addTask(const MyString& taskName, time_t taskDueDate, const My
 	try
 	{
 		taskHolders[indexLoggedUser].addTask(taskName, taskDueDate, description);
+		std::cout << "Task added successfully!" << std::endl;
 	}
 	catch (const std::exception& e )
 	{
@@ -183,6 +149,7 @@ void TaskManager::updateTaskName(size_t _ID, const MyString& newTaskName)
 	try
 	{
 		taskHolders[indexLoggedUser].updateTaskName(_ID, newTaskName);
+		std::cout << "Task name updated successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -198,6 +165,7 @@ void TaskManager::startTask(size_t _ID)
 	try
 	{
 		taskHolders[indexLoggedUser].startTask(_ID);
+		std::cout << "Task started successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -213,6 +181,7 @@ void TaskManager::updateTaskDescription(size_t _ID, const MyString& newDescripti
 	try
 	{
 		taskHolders[indexLoggedUser].updateTaskDescription(_ID,newDescription);
+		std::cout << "Task description updated successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -287,9 +256,7 @@ void TaskManager::listTasksByDate(const MyString& date) const
 		throw std::runtime_error("No Logged User!");
 	}
 	try
-	{// Convert MyString date to time_t
-		time_t taskDate = HPF::stringToTime(date);
-		//i have to convert date to time_t ?
+	{
 		taskHolders[indexLoggedUser].listTasksByDate(date);
 	}
 	catch (const std::exception& e)
@@ -336,6 +303,7 @@ void TaskManager::finishTask(size_t _ID)
 	try
 	{
 		taskHolders[indexLoggedUser].finishTask(_ID);
+		std::cout << "Task finished successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -351,6 +319,7 @@ void TaskManager::removeTaskFromDashboard(size_t _ID)
 	try
 	{
 		taskHolders[indexLoggedUser].removeTaskFromDashboard(_ID);
+		std::cout << "Task removed from dashboard successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -366,6 +335,7 @@ void TaskManager::addTaskToDashboard(size_t _ID)
 	try
 	{
 		taskHolders[indexLoggedUser].addTaskToDashboard(_ID);
+		std::cout << "Task added to dashboard successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -413,6 +383,7 @@ void TaskManager::addCollaboration(const MyString& newCollaboration)
 		collabHolder.pushBack(Collaboration(newCollaboration, users[indexLoggedUser]));
 		size_t indexCoreespondingCollab = getCollabIndexByName(newCollaboration);
 		taskHolders[indexLoggedUser].addCollaboration(&collabHolder[indexCoreespondingCollab]);
+		std::cout << "Collaboration added successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -437,7 +408,15 @@ void TaskManager::addCollaboration(const Collaboration& newCollaboration)
 
 void TaskManager::addUserCollaboration(size_t indexUser,Collaboration* newCollaboration)
 {
-	taskHolders[indexUser].addCollaboration(newCollaboration);
+	try
+	{
+		taskHolders[indexUser].addCollaboration(newCollaboration);
+	}
+	catch (const std::exception&)
+	{
+		std::cout << "The user you are trying to add does not exist in the database" << std::endl;
+	}
+	
 }
 
 void TaskManager::deleteCollaboration(const MyString& name)
@@ -461,7 +440,7 @@ void TaskManager::deleteCollaboration(const MyString& name)
 		}
 		
 		collabHolder.popAt(indexCoreespondingCollab);
-		
+		std::cout << "Collaboration deleted successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -494,6 +473,7 @@ void TaskManager::addUser(const MyString& collaborationName, const MyString& use
 		size_t collaborationIndex = getCollabIndexByName(collaborationName);
 		taskHolders[indexLoggedUser].addUser(collaborationName, user);
 		addUserCollaboration(getProfileIndexByName(user), &collabHolder[collaborationIndex]);
+		std::cout << "User added successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -516,6 +496,7 @@ void TaskManager::assignTask(const MyString& collaborationName, const MyString& 
 
 		taskHolders[correspondingProfile].addTask(*taskHolders[correspondingProfile]
 			.getCollaborationTaskByName(collaborationName,taskName));
+		std::cout << "Task assigned successfully!" << std::endl;
 	}
 	catch (const std::exception& e)
 	{

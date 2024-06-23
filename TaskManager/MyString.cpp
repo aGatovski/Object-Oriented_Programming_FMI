@@ -17,6 +17,28 @@ namespace StringHelperFunctions {
 
 using namespace StringHelperFunctions;
 
+MyString MyString::substr(size_t begin, size_t howMany) const
+{
+    if (begin + howMany > getLength())
+        throw std::length_error("Error, Substr out of range");
+
+
+    MyString res(howMany + 1);
+    strncat(res.data, data + begin, howMany);
+    return res;
+}
+
+bool MyString::isDigit() const
+{
+    for (size_t i = 0; i < length; i++)
+    {
+        if (!isdigit(data[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void MyString::copyFrom(const MyString& other) {
     length = other.length;
     capacity = other.capacity;

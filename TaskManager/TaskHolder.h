@@ -14,7 +14,7 @@ public:
     void startTask(size_t _ID);
     void updateTaskDescription(size_t _ID, const MyString& newDescription);
     void deleteTask(size_t _ID);
-    void deleteTask(const MyString& taskName);
+    //void deleteTask(const MyString& taskName);
     void getTask(const MyString& name) const;
     void getTaskByID(size_t _ID) const;
     void listTasksByDate(time_t date) const; //
@@ -75,7 +75,7 @@ size_t TaskHolder::getTaskIndexByID(const Vector<T>& elements, size_t ID) const
 }
 
 template<typename T>
-inline size_t TaskHolder::getIndexByName(const Vector<T>& elements, const MyString& name)
+ size_t TaskHolder::getIndexByName(const Vector<T>& elements, const MyString& name)
 {
     size_t length = elements.getSize();
     for (size_t i = 0; i < length; i++)

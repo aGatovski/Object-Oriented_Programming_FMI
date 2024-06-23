@@ -7,7 +7,6 @@ namespace SourceFail {
 	constexpr char failUsers[] = "failUsers.dat";
 	constexpr char collabsTM[] = "collabs.dat";
 }
-
 class TaskManager {
 public:
 
@@ -17,10 +16,10 @@ public:
 	void loginUser(const MyString& _username, const MyString& _password);
 	void logout();
 	void exit();
+	size_t getProfileIndexByName(const MyString& name);
 
 	//Task Functions
 	void addTask(const MyString& taskName, time_t taskDueDate, const MyString& description);
-
 	void addTask(const Task& other);
 	void addUserTask(size_t indexUser,const Task& newTask);
 	void updateTaskName(size_t _ID, const MyString& newTaskName);
@@ -31,10 +30,6 @@ public:
 	void getTaskByID(size_t _ID) const;
 	void listTasksByDate(time_t date) const; //
 	void listTasksByDate(const MyString& date) const;
-	
-	/*void listTaskByDateF(const MyString& date) const;*/
-
-
 	void listAllTasks() const;
 	void listCompletedTasks() const;
 	void finishTask(size_t _ID);
@@ -44,6 +39,7 @@ public:
 	void addTaskToDashboard(size_t _ID);
 	void listDashboardTasks() const;
 	void loadDashboard();
+
 	//Collaboration Functions
 	void addCollaboration(const MyString& newCollaboration);
 	void addCollaboration(const Collaboration& newCollaboration);
@@ -53,17 +49,10 @@ public:
 	void addUser(const MyString& collaborationName, const MyString& user);
 	void assignTask(const MyString& collaborationName, const MyString& _username, const MyString& taskName, time_t taskDueDate, const MyString& description);
 	void listTasks(const MyString& collaborationName) const;
-
-
-	size_t getProfileIndexByName( const MyString& name);
 	size_t getCollabIndexByName(const MyString& name);
 	
-
-
 private:
 	Vector<Profile> users;
-	//tui ne trqq sushtestvuva mai
-	Vector<Task> dashboard;
 	Vector<TaskHolder> taskHolders;
 	Vector<Collaboration> collabHolder;
 	int indexLoggedUser = -1;

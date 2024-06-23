@@ -4,20 +4,24 @@
 #include <iostream>
 #include "TaskManager.h"
 #include "TaskManagerFactory.h"
+#include "UserInterface.h"
 int main()
 {
-	std::time_t now = std::time(nullptr);
-	TaskManager tm;
-	tm.registerUser("osama", "binladen");
-	tm.registerUser("Borat", "S Golemiq");
-	tm.loginUser("osama", "binladen");
-	tm.addTask("9/11", now, "bomb");
-	tm.listAllTasks();
-	std::cout << "-----------------------------------------" << std::endl;
-	tm.exit();
-	TaskManager tm1;
-	TaskManagerLoad(tm1);
+	//TaskManager tm;
+	//TaskManagerLoad(tm);
+	///*std::time_t now = std::time(nullptr);
 
+	//tm.registerUser("osama", "binladen");
+	//tm.registerUser("Borat", "S Golemiq");
+	//tm.loginUser("osama", "binladen");
+	//tm.addTask("9/11", now, "bomb");
+	//tm.listAllTasks();
+	//std::cout << "-----------------------------------------" << std::endl;
+	//tm.exit();*/
+	///*TaskManager tm1;
+	//TaskManagerLoad(tm1);*/
+	//run(tm);
+	
 
 	//std::time_t now = std::time(nullptr);
 	////MyString 2024-3-7 
@@ -96,4 +100,5 @@ int main()
 	//std::cout << "-----------------------------------------" << std::endl;
 	//tm.loginUser("Borat", "S Golemiq");
 	//tm.listAllTasks();
+	return 0;
 }
