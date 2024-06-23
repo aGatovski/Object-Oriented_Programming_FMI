@@ -1,10 +1,5 @@
 #include"TaskHolder.h"
 
-TaskHolder::TaskHolder(Profile& profile) : user(&profile)
-{
-	loadDashboardTasks();
-}
-
 //Tasks Functions
 void TaskHolder::addTask(const MyString& taskName, time_t taskDueDate, const MyString& description)
 {
@@ -13,6 +8,20 @@ void TaskHolder::addTask(const MyString& taskName, time_t taskDueDate, const MyS
 	for (size_t i = 0; i < length; i++)
 	{
 		if (newTask == tasks[i]) {
+			throw std::runtime_error("Trying to create a task that already exists!");
+		}
+	}
+	tasks.pushBack(newTask);
+}
+
+
+void TaskHolder::addTask(const Task& newTask)
+{
+	size_t length = tasks.getSize();
+	for (size_t i = 0; i < length; i++)
+	{
+		//logika za sravnenie na taskove
+		if (newTask.getName() == tasks[i].getName()) {
 			throw std::runtime_error("Trying to create a task that already exists!");
 		}
 	}
@@ -75,6 +84,18 @@ void TaskHolder::deleteTask(size_t _ID)
 	}
 }
 
+void TaskHolder::deleteTask(const MyString& taskName)
+{
+		size_t length = tasks.getSize();
+		for (size_t i = 0; i < length; i++)
+		{
+			if (tasks[i].getName() == taskName) {
+				tasks.popAt(i);
+			}
+		}
+		throw std::logic_error("No task with this name exists!");
+}
+
 void TaskHolder::getTask(const MyString& name) const
 {
 	try
@@ -91,30 +112,27 @@ void TaskHolder::getTask(const MyString& name) const
 
 void TaskHolder::listTasksByDate(time_t date) const
 {
-	/*> list-tasks 2024-03-15
-	Task name: Group_project
-	Task ID: 1287
-	Due date: Fri Mar 15 00:00:00 2024
-	Task desc: example desc
-	Status: ON HOLD
-	Assignee: user567
-	*/
 	size_t length = tasks.getSize();
 	for (size_t i = 0; i < length; i++) {
-		if (tasks[i].getDueDate() == date) {
-			tasks[i].printTaskInformation();
+		time_t getDate = tasks[i].getDueDate();
+		std::tm* getDateLocalTime = std::localtime(&getDate);
+		std::tm* askedDateLocalTime = std::localtime(&date);
+		if (std::mktime(getDateLocalTime) == std::mktime(askedDateLocalTime)) {
+			
+				tasks[i].printTaskInformation();
+			
 		}
 	}
-
 }
+
+
 //Dashboard Functions
 void TaskHolder::removeTaskFromDashboard(size_t _ID)
 {
 	try
 	{
-		size_t indexCorrespondingTask = getTaskIndexByID(dashboard, _ID);
-		//size_t indexCorrespondingProfile = getTaskIndexByID(_ID);
-		tasks.popAt(indexCorrespondingTask);
+		size_t indexCorrespondingTask = getDashboardTaskIndexByID(_ID);
+		dashboard.popAt(indexCorrespondingTask);
 	}
 	catch (const std::exception& e)
 	{
@@ -126,9 +144,8 @@ void TaskHolder::addTaskToDashboard(size_t _ID)
 {
 	try
 	{
-		size_t indexCorrespondingTask = getTaskIndexByID(tasks, _ID);
-		//size_t indexCorrespondingProfile = getTaskIndexByID(_ID);
-		dashboard.pushBack(tasks[indexCorrespondingTask]);
+		size_t indexCorrespondingTask = getTaskIndexByID(_ID);
+		dashboard.pushBack(&tasks[indexCorrespondingTask]);
 	}
 	catch (const std::exception& e)
 	{
@@ -138,35 +155,82 @@ void TaskHolder::addTaskToDashboard(size_t _ID)
 
 void TaskHolder::listDashboardTasks() const
 {
-	//loadDashboardTasks();
-
-	//wtora logica che da ne maham const dokato ne izmislq nesh drugo
-	std::time_t currentTime = std::time(nullptr);
-	listTasksByDate(currentTime);
-
 	size_t length = dashboard.getSize();
 	for (size_t i = 0; i < length; i++)
 	{
-		dashboard[i].printTaskInformation();
+		dashboard[i]->printTaskInformation();
 	}
 }
 
-void TaskHolder::loadDashboardTasks()
+void TaskHolder::loadDashboard()
 {
-	// Get current time as std::time_t
-	std::time_t currentTime = std::time(nullptr);
+	
+	std::time_t now = std::time(nullptr);
+	//MyString 2024-3-7 
+	std::tm* localTime = std::localtime(&now);
 
-	// Iterate over tasks using an index-based loop
 	size_t length = tasks.getSize();
-	for (size_t i = 0; i < length; ++i) {
-		//Task& task = tasks[i]; // Get reference to current task
+	for (size_t i = 0; i < length; i++)
+	{
+		if (!dashboardContainsTask(&tasks[i])) {
+			std::tm* taskDueDate = tasks[i].getDueDateFormated();
+			//std::tm localTime = {}; // Initialize to all zeros
+			//localTime.tm_year = /* set current year */;
+			//localTime.tm_mon = /* set current month */;
+			//localTime.tm_mday = /* set current day */;
 
-		// Compare task's due date with current time
-		if (tasks[i].getDueDate() == currentTime) {
-			dashboard.pushBack(tasks[i]);
+			// Convert localTime to time_t using mktime
+			std::time_t currentTime = std::mktime(localTime);
+
+			// Compare due dates
+			if (std::mktime(taskDueDate) == currentTime) {
+				if (tasks[i].getStatus() != TaskStatus::DONE) {
+					dashboard.pushBack(&tasks[i]);
+				}
+			}
 		}
 	}
 }
+
+size_t TaskHolder::getDashboardTaskIndexByID(size_t _ID)
+{
+	size_t length = dashboard.getSize();
+	for (size_t i = 0; i < length; i++)
+	{
+		if (dashboard[i]->getID() == _ID) {
+			return i;
+		}
+	}
+	throw;
+}
+
+bool TaskHolder::dashboardContainsTask(const Task* task)
+{
+	size_t length = dashboard.getSize();
+	for (size_t i = 0; i < length; i++)
+	{
+		if (dashboard[i]->getID() == task->getID()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+const Task* TaskHolder::getCollaborationTaskByName(const MyString& collaborationName, const MyString& name) const
+{
+	try
+	{
+		size_t indexCorrespondingCollab = getCollaborationIndexByName(collaborationName);
+		return collabs[indexCorrespondingCollab]->getTaskByName(name);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+	
+}
+
 //Universal Functions
 void TaskHolder::getTaskByID(size_t _ID) const
 {
@@ -215,6 +279,18 @@ void TaskHolder::finishTask(size_t _ID)
 	}
 }
 
+size_t TaskHolder::getTaskIndexByID(size_t ID) const
+{
+	size_t length = tasks.getSize();
+	for (size_t i = 0; i < length; i++)
+	{
+		if (tasks[i].getID() == ID) {
+			return i;
+		}
+	}
+	throw std::logic_error("Trying to access a task with ID that does not exist!");
+}
+
 
 void TaskHolder::addCollaboration(Collaboration* newCollaboration)
 {
@@ -249,6 +325,7 @@ void TaskHolder::assignTask(const MyString& collaborationName, const Profile& us
 	{
 		size_t indexCorrespondingCollaboration = getCollaborationIndexByName(collaborationName);
 		collabs[indexCorrespondingCollaboration]->assignTask(&user,taskName,taskDueDate,description);
+		//tasks.pushBack(*collabs[indexCorrespondingCollaboration]->getTaskByName(taskName));
 	}
 	catch (const std::exception& e)
 	{
@@ -266,103 +343,31 @@ size_t TaskHolder::getCollaborationIndexByName(const MyString& name) const
 	}
 }
 
-//Helping Function For identifying tasks at certain positions
-//size_t TaskManager::getTaskIndexByID(size_t ID ) const
-//{
-//	size_t length = tasks.getSize();
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		if (tasks[i].getID() == ID) {
-//			return i;
-//		}
-//	}
-//	throw std::logic_error("Trying to access a task with ID that does not exists!");
-//}
-//
-//size_t TaskHolder::getTaskIndexByName(const MyString& name) const
-//{
-//	size_t length = tasks.getSize();
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		if (tasks[i].getName() == name) {
-//			return i;
-//		}
-//	}
-//	throw std::logic_error("Trying to access a task with name that does not exists!");
-//}
-//
-//
-////Collaboration Functions
-//void TaskHolder::addCollaboration(const MyString& collaborationName)
-//{
-//	//logica dali veche ne sushstestvuva
-//	collabs.pushBack(Collaboration(collaborationName, user->getUsername()));
-//}
-//
-//void TaskHolder::addCollaboration(const Collaboration& newCollaboration)
-//{
-//	collabs.pushBack(newCollaboration);
-//}
-//
-//void TaskHolder::deleteCollaboration(const MyString& name)
-//{
-//	size_t length = collabs.getSize();
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		if (collabs[i].getName() == name) {
-//			collabs.popAt(i);
-//			return;
-//		}
-//	}
-//	throw std::logic_error("No instance of a collaboration exist with this name!");
-//}
-//
-//void TaskHolder::listCollaborations() const
-//{
-//	size_t length = collabs.getSize();
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		std::cout << collabs[i].getName() << std::endl;
-//	}
-//}
-//
-//void TaskHolder::addUser(const MyString& collaborationName, const Profile& user)
-//{
-//	try
-//	{
-//		size_t indexCorrespondingTask = getIndexByName(collabs, collaborationName);
-//		//size_t indexCorrespondingTask = getTaskIndexByID(_ID);
-//		collabs[indexCorrespondingTask].addUser(&user);
-//	}
-//	catch (const std::exception& e)
-//	{
-//		std::cout << e.what() << std::endl;
-//	}
-//}
-//
-//void TaskHolder::assignTask(const MyString& collaborationName, const MyString& _username, const MyString& taskName, time_t taskDueDate, const MyString& description)
-//{
-//}
-//
-//void TaskHolder::listTasks(const MyString& collaborationName) const
-//{
-//	size_t length = collabs.getSize();
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		if (collabs[i].getName() == collaborationName) {
-//			collabs[i].printTasks();
-//		}
-//	}
-//
-//
-//	//Tasks for collab:
-//	//Task name : Group_project
-//	//	Task ID : 1287
-//	//	Due date : Fri Mar 15 00 : 00 : 00 2024
-//	//	Task desc : example desc
-//	//	Status : ON HOLD
-//	//	Assignee : user567
-//
-//}
-//
-//
+void TaskHolder::deleteCollaboration(const MyString& name,const Profile& assignee)
+{
+	try
+	{
+		size_t indexCorrespondingCollaboration = getCollaborationIndexByName(name);
+		size_t iDCorrespondingTask = collabs[indexCorrespondingCollaboration]->getTasksIDByAssignee(assignee.getUsername());
+		deleteTask(iDCorrespondingTask);
+		//collabs[indexCorrespondingCollaboration] = nullptr;
+		collabs.popAt(indexCorrespondingCollaboration);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+}
+
+Vector<MyString>& TaskHolder::getCollaborationWorkgroupAtIndex(const MyString& name)
+{
+	try
+	{
+		size_t indexCorrespondingCollaboration = getCollaborationIndexByName(name);
+		return collabs[indexCorrespondingCollaboration]->getWorkgroup();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+}

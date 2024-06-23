@@ -29,6 +29,16 @@ time_t Task::getDueDate() const
 	return dueDate;
 }
 
+std::tm* Task::getDueDateFormated() const
+{
+	std::tm* dueDateFormatted = std::localtime(&dueDate);
+
+	if (dueDateFormatted == nullptr) {
+		throw std::runtime_error("Failed to convert time_t to tm structure");
+	}
+	return dueDateFormatted;
+}
+
 size_t Task::getID() const
 {
 	return ID;

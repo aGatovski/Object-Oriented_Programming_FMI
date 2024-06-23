@@ -13,13 +13,13 @@ class Task {
 public:
 	Task() = default;
 	Task(const MyString& _name, time_t _dueDate, const MyString& _description);
-
 	void printTaskInformation() const;
 
 	//Get
 	const MyString& getName() const;
 	const MyString& getDescription() const;
 	time_t getDueDate() const;
+	std::tm* getDueDateFormated() const ;
 	size_t getID() const;
 	const TaskStatus& getStatus() const;
 	const MyString getTaskStatusToPrint() const;
@@ -32,6 +32,7 @@ private:
 	size_t ID;
 	MyString name;
 	time_t dueDate;
+	//tm* dueDateF;
 	TaskStatus status = TaskStatus::ON_HOLD;
 	MyString description;
 

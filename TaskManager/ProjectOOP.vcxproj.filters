@@ -68,5 +68,8 @@
     <ClInclude Include="CollaborationTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TaskManagerFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

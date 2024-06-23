@@ -1,5 +1,4 @@
 #pragma once
-#include "Vector.hpp"
 #include "MyString.h"
 #include "Task.h"
 #include "Profile.h"
@@ -7,23 +6,34 @@
 class TaskHolder {
 public:
     TaskHolder() = default;
-    TaskHolder(Profile& profile); // Constructor to initialize with Profile
 
     // Task-related Functions
     void addTask(const MyString& taskName, time_t taskDueDate, const MyString& description);
+    void addTask(const Task& newTask);
     void updateTaskName(size_t _ID, const MyString& newTaskName);
     void startTask(size_t _ID);
     void updateTaskDescription(size_t _ID, const MyString& newDescription);
-    void removeTaskFromDashboard(size_t _ID);
-    void addTaskToDashboard(size_t _ID);
     void deleteTask(size_t _ID);
+    void deleteTask(const MyString& taskName);
     void getTask(const MyString& name) const;
     void getTaskByID(size_t _ID) const;
-    void listTasksByDate(time_t date) const;
+    void listTasksByDate(time_t date) const; //
+
+    
+
     void listAllTasks() const;
     void listCompletedTasks() const;
-    void listDashboardTasks() const;
     void finishTask(size_t _ID);
+
+    size_t getTaskIndexByID(size_t ID) const;
+
+    //Dashboard Function
+    void removeTaskFromDashboard(size_t _ID);
+    void addTaskToDashboard(size_t _ID);
+    void listDashboardTasks() const;
+    void loadDashboard();
+    size_t getDashboardTaskIndexByID(size_t _ID);
+    bool dashboardContainsTask(const Task* task);
 
     //Collaboration functions
     void addCollaboration(Collaboration* newCollaboration);
@@ -32,6 +42,8 @@ public:
     void assignTask(const MyString& collaborationName, const Profile& user, const
                     MyString& taskName, time_t taskDueDate, const MyString& description);
     size_t getCollaborationIndexByName(const MyString& name) const;
+    void deleteCollaboration(const MyString& name, const Profile& assignee);
+    Vector<MyString>& getCollaborationWorkgroupAtIndex(const MyString& name);
 
 
     template<typename T>
@@ -40,15 +52,13 @@ public:
     template<typename T>
     size_t getIndexByName(const Vector<T>& elements, const MyString& name);
 
-    
+   const Task* getCollaborationTaskByName(const MyString& collaborationName,const MyString& taskName) const ;
 
 private:
     Vector<Task> tasks;
     Vector<Collaboration*> collabs;
-    Vector<Task> dashboard;
-    Profile* user;
+    Vector<Task*> dashboard;
 
-    void loadDashboardTasks();
 };
 
 template<typename T>

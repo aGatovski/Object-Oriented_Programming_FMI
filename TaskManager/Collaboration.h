@@ -16,6 +16,11 @@ public:
     void listTasks(const MyString& collaborationName) const;
 
     const MyString& getName() const;
+    const MyString& getCollaborationCreator() const;
+     Vector<MyString>& getWorkgroup();
+     size_t getTasksIDByAssignee(const MyString& name);
+
+     Task* getTaskByName(const MyString& taskName);
 
 private:
     size_t ID = 0;

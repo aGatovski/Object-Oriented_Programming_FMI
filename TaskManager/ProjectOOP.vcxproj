@@ -145,6 +145,7 @@
     <ClInclude Include="Task.h" />
     <ClInclude Include="TaskHolder.h" />
     <ClInclude Include="TaskManager.h" />
+    <ClInclude Include="TaskManagerFactory.h" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
