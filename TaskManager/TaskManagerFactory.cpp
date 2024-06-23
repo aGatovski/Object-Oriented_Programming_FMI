@@ -1,9 +1,9 @@
 #pragma once
-
 #include"TaskManagerFactory.h"
+
 void TaskManagerLoad(TaskManager& tm) {
    
-    std::ifstream ifs(SourceFail::failUsers, std::ios::in | std::ios::binary); //
+    std::ifstream ifs(SourceFail::failUsers, std::ios::in | std::ios::binary); 
     if (!ifs.is_open()) {
         throw;
     }
@@ -13,14 +13,11 @@ void TaskManagerLoad(TaskManager& tm) {
         ifs.read(reinterpret_cast<char*>(&user), sizeof(Profile));
 
         if (ifs.eof()) {
-            break; // If failed to read entire Profile, break out of loop
+            break;
         }
 
         TaskHolder th;
-        MyString fileName(user.getUsername());
-        MyString dat(".dat");
-        fileName += dat;
-       
+        MyString fileName = user.getUsername() + MyString(".dat");
 
         std::ifstream ifsTaskHolder(fileName.c_str(), std::ios::binary);
         if (!ifsTaskHolder.is_open()) {

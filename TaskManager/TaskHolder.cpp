@@ -120,7 +120,6 @@ void TaskHolder::listTasksByDate(time_t date) const
 	}
 }
 
-
 //Dashboard Functions
 void TaskHolder::removeTaskFromDashboard(size_t _ID)
 {
@@ -166,9 +165,7 @@ void TaskHolder::listDashboardTasks() const
 
 void TaskHolder::loadDashboard()
 {
-	
 	std::time_t now = std::time(nullptr);
-	//MyString 2024-3-7 
 	std::tm* localTime = std::localtime(&now);
 
 	size_t length = tasks.getSize();
@@ -176,15 +173,8 @@ void TaskHolder::loadDashboard()
 	{
 		if (!dashboardContainsTask(&tasks[i])) {
 			std::tm* taskDueDate = tasks[i].getDueDateFormated();
-			//std::tm localTime = {}; // Initialize to all zeros
-			//localTime.tm_year = /* set current year */;
-			//localTime.tm_mon = /* set current month */;
-			//localTime.tm_mday = /* set current day */;
-
-			// Convert localTime to time_t using mktime
 			std::time_t currentTime = std::mktime(localTime);
 
-			// Compare due dates
 			if (std::mktime(taskDueDate) == currentTime) {
 				if (tasks[i].getStatus() != TaskStatus::DONE) {
 					dashboard.pushBack(&tasks[i]);
@@ -217,7 +207,6 @@ bool TaskHolder::dashboardContainsTask(const Task* task)
 	}
 	return false;
 }
-
 
 const Task* TaskHolder::getCollaborationTaskByName(const MyString& collaborationName, const MyString& name) const
 {
@@ -293,7 +282,7 @@ size_t TaskHolder::getTaskIndexByID(size_t ID) const
 	throw std::logic_error("Trying to access a task with ID that does not exist!");
 }
 
-
+//Collaboration functions
 void TaskHolder::addCollaboration(Collaboration* newCollaboration)
 {
 	collabs.pushBack(newCollaboration);

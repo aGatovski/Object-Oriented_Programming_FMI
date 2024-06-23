@@ -17,15 +17,10 @@ public:
     //void deleteTask(const MyString& taskName);
     void getTask(const MyString& name) const;
     void getTaskByID(size_t _ID) const;
-    void listTasksByDate(time_t date) const; //
-
-    
-
+    void listTasksByDate(time_t date) const; 
     void listAllTasks() const;
     void listCompletedTasks() const;
     void finishTask(size_t _ID);
-
-    size_t getTaskIndexByID(size_t ID) const;
 
     //Dashboard Function
     void removeTaskFromDashboard(size_t _ID);
@@ -35,15 +30,19 @@ public:
     size_t getDashboardTaskIndexByID(size_t _ID);
     bool dashboardContainsTask(const Task* task);
 
+    //Since dashboard is Vector Task* it does not work like the Vector Task so the template function cannot be applied
+    size_t getTaskIndexByID(size_t ID) const;
+
     //Collaboration functions
     void addCollaboration(Collaboration* newCollaboration);
     void listCollaborations() const;
     void addUser(const MyString& collaborationName, const MyString& user); 
-    void assignTask(const MyString& collaborationName, const Profile& user, const
-                    MyString& taskName, time_t taskDueDate, const MyString& description);
-    size_t getCollaborationIndexByName(const MyString& name) const;
+    void assignTask(const MyString& collaborationName, const Profile& user, const MyString& taskName, time_t taskDueDate, const MyString& description);
     void deleteCollaboration(const MyString& name, const Profile& assignee);
+
+    size_t getCollaborationIndexByName(const MyString& name) const;
     Vector<MyString>& getCollaborationWorkgroupAtIndex(const MyString& name);
+    const Task* getCollaborationTaskByName(const MyString& collaborationName, const MyString& taskName) const;
 
 
     template<typename T>
@@ -52,7 +51,6 @@ public:
     template<typename T>
     size_t getIndexByName(const Vector<T>& elements, const MyString& name);
 
-   const Task* getCollaborationTaskByName(const MyString& collaborationName,const MyString& taskName) const ;
 
 private:
     Vector<Task> tasks;
